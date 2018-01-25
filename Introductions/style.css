@@ -4,15 +4,35 @@
 
 body{
     font-family: Arial, Helvetica, Serif;
-    background-color: #ECECEA;
+    background-color: #FDF3E7;
+}
+
+h1{
+    color:#FDF3E7; 
+}
+
+img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border: 5px solid #C63D0F;
+    border-radius: 2px;
 }
 
 /* Page Styles*/
 
+
 header{
+    background: linear-gradient(to bottom, #C63D0F 70%, #FDF3E7 30%);
+    overflow: hidden;
     text-align:center;
+    padding: 0;
+    margin-bottom: 0px;
+    position: relative;
 }
 
 footer{
-    
+    background-color: #C63D0F;
+    overflow: hidden;
+    border-top: 10px double #FDF3E7;
 }
