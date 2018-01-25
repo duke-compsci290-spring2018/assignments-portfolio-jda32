@@ -4,14 +4,35 @@
 
 body{
     font-family: Arial, Helvetica, Serif;
-    background-color: #FDF3E7;
+    background-image: url(../light-veneer.png);
 }
 
 h1{
     color:#FDF3E7; 
 }
 
-img{
+h2{
+    color:#7E8F7C;
+    padding: 5px;
+    text-indent: 40px;
+}
+
+li{
+    margin-left: 40px;
+    list-style: square;
+    font: Arial;
+    font-weight: bold;
+    
+}
+
+p{
+    margin-left:65px;
+    margin-right:50px;
+    font: Arial;
+    font-weight: bold;
+}
+
+img.prof{
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -21,18 +42,55 @@ img{
 
 /* Page Styles*/
 
+a.one{
+    color: gainsboro;
+    text-decoration: none;
+}
+
+a.two{
+    color: darkcyan;
+    text-decoration: none;
+}
+a.two:hover{
+    text-decoration:underline;
+}
+a.two:visited{
+    color:darkmagenta;
+    text-decoration: underline;
+}
+
+a.three{
+    color:black;
+    font: Arial;
+    text-decoration: none;
+}
+a.three:hover{
+    color:aqua;
+    text-decoration: underline;
+}
 
 header{
-    background: linear-gradient(to bottom, #C63D0F 70%, #FDF3E7 30%);
+    background: linear-gradient(to bottom, #C63D0F 70%, transparent 30%);
     overflow: hidden;
     text-align:center;
     padding: 0;
     margin-bottom: 0px;
     position: relative;
+    padding-bottom: 10px;
 }
 
 footer{
     background-color: #C63D0F;
     overflow: hidden;
     border-top: 10px double #FDF3E7;
+}
+
+footer.left{
+    text-align:left;
+    float:left;
+}
+
+footer.right{
+    text-align: right;
+    float: right;
 }
