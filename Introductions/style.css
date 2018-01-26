@@ -42,7 +42,7 @@ img.prof{
 
 /* Page Styles*/
 
-a.one{
+#one{
     color: gainsboro;
     text-decoration: none;
 }
@@ -60,7 +60,7 @@ a.two:visited{
 }
 
 a.three{
-    color:black;
+    color:#fff;
     font: Arial;
     text-decoration: none;
 }
@@ -79,18 +79,35 @@ header{
     padding-bottom: 10px;
 }
 
-footer{
-    background-color: #C63D0F;
+#footer{
+    position:relative;
     overflow: hidden;
-    border-top: 10px double #FDF3E7;
+    text-align: left;
+    text-align:top;
 }
 
-footer.left{
-    text-align:left;
+.wrap{
+    position: relative;
+    vertical-align: top;
+    margin: 0 auto;
+    padding: 20px;
+    overflow: hidden;
+    background: #3E3E3E;
+    color: #fff;
+    font: 900 14px/26px Arial, serif;
+    text-transform: capitalize;
+}
+
+.left{
     float:left;
+    width: 33%;
 }
 
-footer.right{
-    text-align: right;
+.right{
     float: right;
+    width: 33%;
+}
+
+.centered{
+    overflow: hidden;
 }
