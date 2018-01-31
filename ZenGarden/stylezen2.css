@@ -1,0 +1,95 @@
+/* Jason Akers */
+
+
+
+.page-wrapper{
+    margin-left: 26%;
+    background-color: floralwhite;
+    padding:10px;
+    width: 50%;
+}
+
+/* fixed header*/
+.intro:first-child{
+    position:fixed;
+    width:50%;
+    top: 0;
+    left:26%;
+    background-color: black;
+    color: yellow;
+    text-align: center;
+    z-index: 1;
+    border-right: 30px solid black;
+    
+}
+/* scrolling info*/
+.main.supporting{
+    position: absolute;
+    top: 200px;
+    overflow-y: scroll;
+    width: 50%;
+}
+
+/* fixed left sidebar */
+.sidebar{
+    width: 25%;
+    float: left;
+    height: 100%;
+    position: fixed;
+    top:0;
+    left:0;
+    background-color: black;
+    overflow: hidden;
+    padding-top: 20px;
+    border-right: 10px solid #e5452c;
+}
+
+.sidebar ul{
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li{
+    margin-bottom: 12px;
+    border-top: 1px solid #e5452c;
+    border-bottom: 1px solid #e5452c;
+    color: aliceblue;
+}
+.sidebar ul li:hover{
+    background: #e5452c;
+}
+
+.sidebar a{
+    text-decoration: none;
+    color: aliceblue
+}
+
+.sidebar h3{
+    color: aliceblue;
+}
+/*fixed right sidebar*/
+.preamble{
+    width: 22%;
+    float: right;
+    position: fixed;
+    right: 0;
+    top: 0;
+    background-color: black;
+    overflow: hidden;
+    padding-top: 20px;
+    height: 100%;
+    color: aliceblue;
+}
+
+/* footer to be fixed at the left position */
+footer{
+    position:fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+}
+
+footer a{
+    color: aliceblue;
+    text-decoration: none;
+}
