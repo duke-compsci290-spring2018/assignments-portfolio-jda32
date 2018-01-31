@@ -1,0 +1,125 @@
+/* Jason Akers*/
+
+/*General Styles*/
+
+body{
+    position: relative;
+}
+
+.page-wrapper{
+    background-color:antiquewhite;
+    height: 2000px;
+    position: absolute;
+}
+h1{
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+
+.preamble{
+    border-top: 5px solid #e5452c;
+    padding-top: 15px;
+    width: 100%;
+}
+
+.explanation, .participation{
+    float: left;
+    width: 50%;
+    padding-bottom: 10px;
+}
+.explanation::after, .participation::after{
+    content:" ";
+    display: table;
+    clear: both;
+}
+
+
+
+footer {
+  margin: 5.5em 1px -1px;
+  text-align: center;
+  font-family: Arial,sans-serif;
+  font-size: 1.15em;
+  text-transform: uppercase;
+  text-align: center;
+  padding-bottom: 8.5em;
+}
+footer a {
+  text-decoration: none;
+  background: #272625;
+  padding: 0.15rem 0.5rem;
+  color: #faf3e6;
+  margin: 0 0.15em;
+  letter-spacing: 0.05em;
+}
+
+footer a:hover, footer a:focus {
+  background-color: #e5452c;
+}
+
+@media (max-width: 600px){
+    .explanation, .participation{
+        width: 100%;
+    }
+    .wrapper{
+        width: 90%;
+    }
+}
+/*Make columns out of the wrapper*/
+
+.wrapper {
+  background-color: dimgrey;
+  border-top: 5px solid #edf6ff;
+  margin: -5px auto 0;
+  max-width: 1040px;
+  padding: 40px 0 30px 0;
+  position: relative;
+  width: 100%;
+}
+.wrapper:after {
+  clear: both;
+  content: " ";
+  display: block;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+  visibility: hidden;
+  width: 0;
+}
+
+.wrapper h3 {
+  color: whitesmoke;
+  font-size: 24px;
+  margin-top: 0;
+}
+.wrapper ul {
+  list-style: none;
+  padding: 0;
+}
+.wrapper ul li {
+  margin-bottom: 12px;
+}
+
+.wrapper .design-selection {
+  border-right: 2px solid black;
+  float: left;
+  margin-right: 40px;
+  width: 50%;
+}
+.wrapper a{
+    text-decoration: none;
+    color: aqua
+}
+.wrapper a:hover{
+    text-decoration: underline;
+}
+.wrapper a:visited{
+    color: purple;
+}
+.wrapper .design-selection .design-name {
+  display: block;
+}
+.wrapper .zen-resources {
+  margin-top: 40px;
+}
