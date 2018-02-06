@@ -1,0 +1,46 @@
+/* Jason Akers */
+
+[class*="col-"]{
+    background-color: purple;
+}
+
+.container-fluid{
+    width:98%;
+}
+@media (max-width: 300px){
+    body{
+        background-color:#E0FF4F;
+    }
+    p{
+        color: #0B3954;
+    }
+    h1 a{
+        text-decoration: none;
+        color: #0B3954;
+    }
+    h2 a{
+        text-decoration: none;
+        color: #FF6663
+    }
+    #entry-thumbnail{
+        100%;
+    }
+}
+
+@media (min-width: 301px) and (max-width: 575px){
+    
+}
+
+@media (min-width:576px) and (max-width: 768px){
+    
+}
+
+
+@media (min-width: 769px) {
+    body{
+        background-color: #0E0B16;
+    }
+    p{
+        color: #E7DFDD
+    }
+}
