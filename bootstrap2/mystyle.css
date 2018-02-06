@@ -1,15 +1,18 @@
 /* Jason Akers */
 
-[class*="col-"]{
-    background-color: purple;
-}
+.site-header-wrap{
+        padding: 30px;
+        text-align: center;
+        margin: auto;
+    }
 
 .container-fluid{
-    width:98%;
+    width:100%;
 }
-@media (max-width: 300px){
+@media (max-width: 768px){
+    
     body{
-        background-color:#E0FF4F;
+        background-color:#C09F80;
     }
     p{
         color: #0B3954;
@@ -20,27 +23,105 @@
     }
     h2 a{
         text-decoration: none;
-        color: #FF6663
+        color: #76323F;
     }
     #entry-thumbnail{
         100%;
     }
+    div[class*="odd"]{
+        background-color: #C09F80;
+    }
+    div[class*="even"]{
+        background-color: #D7CEC7;
+    }
+    .site-header-wrap{
+        background-color: #565656;
+    }
+    .site-header-wrap a{
+        color: #D7CEC7;
+    }
+    ul{
+        list-style: none;
+    }
+    a{
+        color:#565656;
+    }
 }
 
-@media (min-width: 301px) and (max-width: 575px){
+
+
+@media (min-width:769px) and (max-width: 991px){
+    .odd3{
+        padding:30px;
+        text-align: center;
+        margin: auto;
+        background-color: #A9A9A9;
+    }
+    .even6{
+        padding:30px;
+        text-align: center;
+        margin: auto;
+        background-color: #A9A9A9;
+    }
+    .odd9{
+        padding:30px;
+        text-align: center;
+        margin: auto;
+        background-color: #A9A9A9;
+    }
+    .even12{
+        padding:30px;
+        text-align: center;
+        margin: auto;
+        background-color: #A9A9A9;
+    }
     
-}
-
-@media (min-width:576px) and (max-width: 768px){
-    
-}
-
-
-@media (min-width: 769px) {
     body{
-        background-color: #0E0B16;
+        background-color: #EFEFEF
+    }
+    ul{
+        list-style: none;
+    }
+    li a{
+        background-color: #CAEBF2;
+        color: #A9A9A9;
+    }
+    h2 a{
+        color:#FF3B3F;
+    }
+}
+
+
+@media (min-width: 992px) {
+    body{
+        background-color: #EEAA7B;
     }
     p{
-        color: #E7DFDD
+        color: #E7DFDD;
+    }
+    .site-header-wrap{
+        color:#E7DFDD;
+    }
+    a{
+        color:#4717F6;
+    }
+    ul{
+        list-style: none;
+    }
+    div[class*="odd"]{
+        background-color: #66B9BF
+    }
+    div[class*="even"]{
+        background-color: #E37222;
+    }
+    footer{
+        background-color: #07889B;
+        width: 100%;
+    }
+    .site-header-wrap{
+        background-color: #07889B;
+    }
+    .site-header-wrap a{
+        color: #DCD0C0;
     }
 }
