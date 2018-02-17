@@ -1,0 +1,49 @@
+body {
+    background-color: wheat;
+}
+
+h1{
+    color:#00000; 
+    text-align: center;
+}
+
+header{
+    background: linear-gradient(to bottom, #C63D0F 70%, transparent 30%);
+    overflow: hidden;
+    text-align:center;
+    padding: 0;
+    margin-bottom: 0px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h2{
+    color:#7E8F7C;
+    padding: 5px;
+    text-indent: 40px;
+}
+
+li{
+    margin-left: 40px;
+    list-style: square;
+    font: Arial;
+    font-weight: bold;
+    text-align: center;
+    
+}
+
+p{
+    margin-left:65px;
+    margin-right:50px;
+    font: Arial;
+    font-weight: bold;
+}
+
+canvas {
+    background-color: black;
+    display: block;
+    margin: 0 auto;
+    border-style: double;
+    border-color: red;
+    border-width: thick
+}
