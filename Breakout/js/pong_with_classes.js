@@ -158,13 +158,19 @@ class InputManager {
             }
         }
         else if (e.keyCode === 49){
-            level = 1;
+            if(start === false && lives === 3){
+                level = 1;
+            }
         }
         else if (e.keyCode === 50){
-            level = 2;
+            if(start === false && lives === 3){
+                level = 2;
+            }
         }
         else if (e.keyCode === 51){
-            level = 3;
+            if(start === false && lives === 3){
+                level = 3;
+            }
         }
     }
 
@@ -358,6 +364,8 @@ class Score extends Sprite {
         ctx.fillText('LastScore: ' + this.hiScore, this.x + 90, this.y);
         ctx.fillText('Lives: ' + this.lives, game.canvas.width - 50, this.y)
     }
+    
+
 
     reset () {
         console.log("Score: " + this.score);
@@ -545,7 +553,7 @@ class Game {
                         b.status--;
                         this.score.increment();
                         count++;
-                        if(b.po == 17){
+                        if(b.po === 17){
                             if (reverse === 0){
                                 reverse = 1;
                             }
