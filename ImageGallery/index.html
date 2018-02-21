@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- always put your name in your work -->
+    <meta name="author" content="Jason Akers">
+    <!-- stop the web browser from ever caching this page or its images -->
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <!-- support for this page -->
+    <link rel="stylesheet" href="style.css">
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="image_gallery.js" async></script>
+
+    <title>Image Gallery</title>
+</head>
+
+<body style="background-color: gainsboro">
+  <div id="title">
+      <h1 class="text">Jason's Image Gallery</h1>
+      <div id = "background"></div>
+  </div>
+
+  <div id="slideshow">
+        <h6> Click on these buttons to navigate slideshow once image categories are chosen.</h2>
+        <button class="left" onclick="plusDivs(-1)">&#10094;</button>
+        <button class="right" onclick="plusDivs(1)">&#10095;</button>
+  </div>
+
+  <div id="checkboxes">
+    <h3>Click the boxes to add/remove them from a slideshow and image gallery.</h3>
+    <h4>Sports Pictures: <input type="checkbox" id="sports_check"></h4>
+    <h4>Food Pictures: <input type="checkbox" id="food_check"></h4>
+    <h4>Random Pictures: <input type="checkbox" id="random_check"></h4>
+  </div>
+
+  <div id="sports_pics">
+    <h2>Action Sports Images</h2>
+  </div>
+
+  <div id="food_pics">
+    <h2>Yummy Food Makes My Tummy Hungry</h2>
+  </div>
+
+  <div id="random_pics">
+    <h2>A Category That Doesn't Really Have A Category.</h2>
+  </div>
+
+  <div id="myModel" class="modal">
+    <span class="close">X</span>
+    <img class="modal-content" id="img01">
+    <div id="caption"></div>
+  </div>
+
+  <div id = "footer">
+  	<hr />
+  	<p>This page and all of its images are covered by creative commons. Note I took none of these pictures. All photos were either provided or obtained through <a href="http://lorempixel.com/">here.</a></p>
+  </div>
+</body>
+</html>

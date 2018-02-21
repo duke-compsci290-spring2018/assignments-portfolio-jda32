@@ -1,0 +1,114 @@
+{
+    "pictures": [
+        {
+            "imgPath" : "gallery_images/sports-q-c-640-480-1.jpg",
+            "name" : "Cricket",
+            "type" : "sports"
+        },
+        {
+            "imgPath" : "gallery_images/sports-q-c-640-480-7.jpg",
+            "name" : "Swimmy Swim Swim",
+            "type" : "sports"
+        },
+        {
+            "imgPath" : "gallery_images/sports-q-c-640-480-3.jpg",
+            "name" : "Biking",
+            "type" : "sports"
+        },
+        {
+            "imgPath" : "gallery_images/sports-q-c-640-480-5.jpg",
+            "name" : "MotoX",
+            "type" : "sports"
+        },
+        {
+            "imgPath" : "gallery_images/sports-q-c-640-480-6.jpg",
+            "name" : "Soccer",
+            "type" : "sports"
+        },
+        {
+            "imgPath" : "gallery_images/sports-q-c-640-480-10.jpg",
+            "name" : "Baseball",
+            "type" : "sports"
+        },
+        {
+            "imgPath" : "gallery_images/food-q-c-640-480-1.jpg",
+            "name" : "Food in a pan",
+            "type" : "food"
+        },
+        {
+            "imgPath" : "gallery_images/food-q-c-640-480-2.jpg",
+            "name" : "Stir Fry",
+            "type" : "food"
+        },
+        {
+            "imgPath" : "gallery_images/food-q-c-640-480-6.jpg",
+            "name" : "Vegetable Medley",
+            "type" : "food"
+        },
+        {
+            "imgPath" : "gallery_images/food-q-c-640-480-7.jpg",
+            "name" : "Rolls",
+            "type" : "food"
+        },
+        {
+            "imgPath" : "gallery_images/food-q-c-640-480-8.jpg",
+            "name" : "Sushi",
+            "type" : "food"
+        },
+        {
+            "imgPath" : "gallery_images/food-q-c-640-480-10.jpg",
+            "name" : "Bread",
+            "type" : "food"
+        },
+        {
+            "imgPath" : "gallery_images/acrobats_fullsize.jpg",
+            "name" : "Acrobats",
+            "type" : "random"
+        },
+        {
+            "imgPath" : "gallery_images/apartments_fullsize.jpg",
+            "name" : "Apartments",
+            "type" : "random"
+        },
+        {
+            "imgPath" : "gallery_images/berries_fullsize.jpg",
+            "name" : "Berries",
+            "type" : "random"
+        },
+        {
+            "imgPath" : "gallery_images/berrytree_fullsize.jpg",
+            "name" : "Berry Tree",
+            "type" : "random"
+        },
+        {
+            "imgPath" : "gallery_images/breckenridge_fullsize.jpg",
+            "name" : "Breckenridge",
+            "type" : "random"
+        },
+        {
+            "imgPath" : "gallery_images/carousel_fullsize.jpg",
+            "name" : "HORSEY",
+            "type" : "random"
+        },
+        {
+            "imgPath" : "gallery_images/abstract-q-c-960-480-2.jpg",
+            "name" : "Abstract",
+            "type" : "abstract"
+        },
+        {
+            "imgPath" : "gallery_images/abstract-q-c-960-480-7.jpg",
+            "name" : "Abstract 2",
+            "type" : "abstract"
+        },
+        {
+            "imgPath" : "gallery_images/abstract-q-c-960-480-4.jpg",
+            "name" : "Abstract 2",
+            "type" : "abstract"
+        },
+        {
+            "imgPath" : "gallery_images/abstract-q-c-960-480-6.jpg",
+            "name" : "Abstract 2",
+            "type" : "abstract"
+        }
+    ]
+}
