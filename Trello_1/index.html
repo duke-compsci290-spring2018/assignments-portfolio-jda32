@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       
+        <!-- always put your name in your work -->
+        <meta name="author" content="Jason Akers">
+        
+        <!-- stop the web browser from ever caching this page or its images -->
+        <meta http-equiv="Cache-Control" content="no-cache" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        
+        <!-- libraries neded for this page -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vuefire/1.4.5/vuefire.js"></script>
+        
+        <!-- support for this page -->
+        <script src="reference.js" async></script>
+        <title>Let's Make a Project</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div id = "app">
+            <header>
+                <img id = "userPic" :src = "currentUser.photo" alt ="Invalid" width = 75>
+            </header>
+            <div id = "userControl">
+                <input class="add-new-user" placeholder="New Username" v-model="newuser">
+                <input class="add-new-user-email" placeholder="New Email" v-model="newemail">
+                <button id="new-user" class="user-button" type="button" @click="newUser()">Sign Up</button>
+            </div>
+            <div id = "itemControl">
+                <input class="add-new-item" placeholder="New Item" v-model="newitem">
+                <button id="new-item" class="item-button" type="button" @click="newItem()">Add Item</button>
+            </div>
+            <div id ="lists">
+                <ul>
+                    <li v-for="item in items">
+                            {{item.title}}
+                            <button class="destroy" @click="removeItem(item)">Destroy List</button>
+                            <button id="hideList" class="list-button" type="button" @click="hideList(item)" v-if="item.visibility">Hide List</button>
+                            <button id="expandList" class="list-button" type="button" @click="expandList(item)" v-if="!item.visibility">Expand List</button>
+                            <br>
+                            <input class="add-new-card" placeholder="New Card Name" v-model="neWcard" v-if="item.visibility">
+                            <input class="add-new-card-desc" placeholder="New Card Desc" v-model="neWcardDesc" v-if="item.visibility">
+                            <input class="add-new-card-date" id="datefield" type="date" placeholder="New Card DueDate" v-model="neWcardDueDate" v-if="item.visibility">
+                            <button id="new-card" class="list-button" type="button" @click="newcard(item)" v-if="item.visibility">Add Card</button>
+                        <ul v-if = "item.visibility">
+                            <li v-for="card in item.cards">{{card.task}}
+                                <button class="destroy" @click="removeCard(item,card)">Destroy Card</button>
+                                <button class="Hide" @click="hideCard(item,card)" v-if="card.visibility">Hide</button>
+                                <button class="Expand" @click="expandCard(item,card)" v-if="!card.visibility">Expand</button>
+                                <div class = item.id id = card.task v-if="card.visibility">
+                                    <p>Description: {{card.desc}}</p>
+                                    <p>Created: {{card.date}}</p>
+                                    <p>Due Date: {{card.dueDate}} <input class="update-card-date" id="datef" type="date" placeholder="Update Due Date" v-model="updDueDate"><button class="Update-Due-Date" @click="updateDue(item,card)">Update Due Date</button></p>
+                                    <p>Days Until Due: {{card.diffDays}}</p>
+                                </div>
+                            </li>
+                            <br>
+                        </ul>
+                    </li>
+                    <br>
+                </ul>
+            </div>
+            
+        </div>
+        <!-- 
+        <section class="todoapp">
+  <header class="header">
+    <h1>todos</h1>
+    <input class="new-todo"
+      autofocus autocomplete="off"
+      placeholder="What needs to be done?"
+      v-model="newTodo"
+      @keyup.enter="addTodo">
+  </header>
+  <section class="main" v-show="todos.length" v-cloak>
+    <input class="toggle-all" type="checkbox" v-model="allDone">
+    <ul class="todo-list">
+      <li v-for="todo in filteredTodos"
+        class="todo"
+        :key="todo.id"
+        :class="{ completed: todo.completed, editing: todo == editedTodo }">
+        <div class="view">
+          <input class="toggle" type="checkbox" v-model="todo.completed">
+          <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
+          <button class="destroy" @click="removeTodo(todo)"></button>
+        </div>
+        <input class="edit" type="text"
+          v-model="todo.title"
+          v-todo-focus="todo == editedTodo"
+          @blur="doneEdit(todo)"
+          @keyup.enter="doneEdit(todo)"
+          @keyup.esc="cancelEdit(todo)">
+      </li>
+    </ul>
+  </section>
+  <footer class="footer" v-show="todos.length" v-cloak>
+    <span class="todo-count">
+      <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
+    </span>
+    <ul class="filters">
+      <li><a href="#/all" :class="{ selected: visibility == 'all' }">All</a></li>
+      <li><a href="#/active" :class="{ selected: visibility == 'active' }">Active</a></li>
+      <li><a href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a></li>
+    </ul>
+    <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
+      Clear completed
+    </button>
+  </footer>
+</section>
+<footer class="info">
+  <p>Double-click to edit a todo</p>
+  <p>Written by <a href="http://evanyou.me">Evan You</a></p>
+  <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+</footer> -->
+    </body>
+</html>
