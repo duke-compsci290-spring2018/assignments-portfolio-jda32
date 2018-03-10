@@ -28,6 +28,10 @@
             <header>
                 <img id = "userPic" :src = "currentUser.photo" alt ="Invalid" width = 75>
             </header>
+            <div id = "colorControl">
+                <input class="change-background" placeholder="Background Color" v-model="color">
+                <button id="new-color" class="color-button" type="button" @click="background()">Change Color</button>
+            </div>
             <div id = "userControl">
                 <input class="add-new-user" placeholder="New Username" v-model="newuser">
                 <input class="add-new-user-email" placeholder="New Email" v-model="newemail">
@@ -49,7 +53,11 @@
                             <input class="add-new-card-desc" placeholder="New Card Desc" v-model="neWcardDesc" v-if="item.visibility">
                             <input class="add-new-card-date" id="datefield" type="date" placeholder="New Card DueDate" v-model="neWcardDueDate" v-if="item.visibility">
                             <button id="new-card" class="list-button" type="button" @click="newcard(item)" v-if="item.visibility">Add Card</button>
+                            <br>
+                        <button id="order-by-due-date" class="list-button" type="button" @click="orderDue(item)" v-if="item.visibility">Order By Due Date</button>
+                        <br>
                         <ul v-if = "item.visibility">
+                            <br>
                             <li v-for="card in item.cards">{{card.task}}
                                 <button class="destroy" @click="removeCard(item,card)">Destroy Card</button>
                                 <button class="Hide" @click="hideCard(item,card)" v-if="card.visibility">Hide</button>
@@ -66,58 +74,15 @@
                     </li>
                     <br>
                 </ul>
+            </div> 
+        </div>
+        <footer id = "footer">
+        <div class="wrap">
+            <div class="left">
+                <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />This work is licensed under a <br><a class="three" rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
             </div>
-            
+            <div class="center">Email: <br> JDA32@DUKE.EDU</div>
         </div>
-        <!-- 
-        <section class="todoapp">
-  <header class="header">
-    <h1>todos</h1>
-    <input class="new-todo"
-      autofocus autocomplete="off"
-      placeholder="What needs to be done?"
-      v-model="newTodo"
-      @keyup.enter="addTodo">
-  </header>
-  <section class="main" v-show="todos.length" v-cloak>
-    <input class="toggle-all" type="checkbox" v-model="allDone">
-    <ul class="todo-list">
-      <li v-for="todo in filteredTodos"
-        class="todo"
-        :key="todo.id"
-        :class="{ completed: todo.completed, editing: todo == editedTodo }">
-        <div class="view">
-          <input class="toggle" type="checkbox" v-model="todo.completed">
-          <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
-          <button class="destroy" @click="removeTodo(todo)"></button>
-        </div>
-        <input class="edit" type="text"
-          v-model="todo.title"
-          v-todo-focus="todo == editedTodo"
-          @blur="doneEdit(todo)"
-          @keyup.enter="doneEdit(todo)"
-          @keyup.esc="cancelEdit(todo)">
-      </li>
-    </ul>
-  </section>
-  <footer class="footer" v-show="todos.length" v-cloak>
-    <span class="todo-count">
-      <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
-    </span>
-    <ul class="filters">
-      <li><a href="#/all" :class="{ selected: visibility == 'all' }">All</a></li>
-      <li><a href="#/active" :class="{ selected: visibility == 'active' }">Active</a></li>
-      <li><a href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a></li>
-    </ul>
-    <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
-      Clear completed
-    </button>
-  </footer>
-</section>
-<footer class="info">
-  <p>Double-click to edit a todo</p>
-  <p>Written by <a href="http://evanyou.me">Evan You</a></p>
-  <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-</footer> -->
+    </footer>
     </body>
 </html>
