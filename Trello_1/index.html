@@ -27,15 +27,28 @@
         <div id = "app">
             <header>
                 <img id = "userPic" :src = "currentUser.photo" alt ="Invalid" width = 75>
+                <br>
+                <h3>Current User: {{ currentUser.name }}</h3>
+                <h3>Current Email: {{ currentUser.email }}</h3>
             </header>
             <div id = "colorControl">
                 <input class="change-background" placeholder="Background Color" v-model="color">
                 <button id="new-color" class="color-button" type="button" @click="background()">Change Color</button>
             </div>
             <div id = "userControl">
-                <input class="add-new-user" placeholder="New Username" v-model="newuser">
-                <input class="add-new-user-email" placeholder="New Email" v-model="newemail">
-                <button id="new-user" class="user-button" type="button" @click="newUser()">Sign Up</button>
+                <div id = "newUserControl" v-if="!currentUser.signedIn">
+                    <input class="add-new-user" placeholder="New Username" v-model="newuser">
+                    <input class="add-new-user-email" placeholder="New Email" v-model="newemail">
+                    <input class="add-new-user-pic" placeholder="New Profile Pic" v-model="newpic">
+                    <button id="new-user" class="user-button" type="button" @click="newUser()">Sign Up</button>
+                </div>
+                <div id = "SignIn" v-if="!currentUser.signedIn">
+                    <input class="sign-in" placeholder="Sign In w/ Username" v-model="signinUser">
+                    <button id="old-user" class="old-user-button" type="button" @click="signIn()">Sign In</button>
+                </div>
+                <div id = "SignOut" v-if="currentUser.signedIn">
+                    <button id="sign-out" class="sign-out" type="button" @click="signOut()">Sign Out</button>
+                </div>
             </div>
             <div id = "itemControl">
                 <input class="add-new-item" placeholder="New Item" v-model="newitem">

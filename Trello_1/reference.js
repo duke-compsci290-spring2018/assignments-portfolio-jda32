@@ -90,13 +90,17 @@ var app = new Vue({
         
         newuser: '',
         newemail: '',
+        newpic: '',
+        
+        signinUser: '',
         
         color: "",
         
         currentUser:{
-            name: "No One",
+            name: "No one is logged in",
             email: "None",
             photo: "./data/no_pic.jpg",
+            signedIn: false,
             id: -1
         }
     },
@@ -209,6 +213,7 @@ var app = new Vue({
         newUser(){
             var usn = app.newuser;
             var emai = app.newemail;
+            var pic = app.newpic;
             if(usn === "" && emai === ""){
                 alert("Please Enter A Valid Username and Email")
             }
@@ -220,10 +225,34 @@ var app = new Vue({
             }
             stor.ref("users/" + app.newuser).set({
                 username: usn,
-                email: emai   
+                email: emai,
+                photo: pic
+            })
+            this.currentUser.photo = pic
+            this.currentUser.email = emai
+            this.currentUser.name = usn
+            this.currentUser.signedIn = true
+        },
+// --- Function to sign in WIP ---
+        signIn(){
+            var usn = app.signinUser
+            stor.ref('users/').child(usn).once('value', function(snapshot){
+                if(snapshot.exists()){
+                    alert('exists')
+                }
+                else{
+                    alert('Username Does Not Exist')
+                }
             })
         },
-// --- Function to sign in will go here ---
+// --- Function to sign out ---
+        signOut(){
+            this.currentUser.photo = "./data/no_pic.jpg"
+            this.currentUser.name = "No one is logged in"
+            this.currentUser.email = "None"
+            this.currentUser.signedIn = false
+            console.log(this.currentUser.signedIn)
+        },
 // --- Change color in the database
         background(){
             stor.ref("color/").set(app.color);
