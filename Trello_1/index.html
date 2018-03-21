@@ -35,6 +35,7 @@
                 <input class="change-background" placeholder="Background Color" v-model="color">
                 <button id="new-color" class="color-button" type="button" @click="background()">Change Color</button>
             </div>
+            <br>
             <div id = "userControl">
                 <div id = "newUserControl" v-if="!currentUser.signedIn">
                     <input class="add-new-user" placeholder="New Username" v-model="newuser">
@@ -49,6 +50,12 @@
                 <div id = "SignOut" v-if="currentUser.signedIn">
                     <button id="sign-out" class="sign-out" type="button" @click="signOut()">Sign Out</button>
                 </div>
+                <br>
+                <div id = "changeUsername" v-if="currentUser.signedIn">
+                    <input class="change-username" placeholder="Update Username" v-model="changeUsername">
+                    <button id="change-user" class="change" type="button" @click="updateUsername()">Change Username</button>
+                </div>
+                <br>
             </div>
             <div id = "itemControl">
                 <input class="add-new-item" placeholder="New Item" v-model="newitem">

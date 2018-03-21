@@ -94,6 +94,8 @@ var app = new Vue({
         
         signinUser: '',
         
+        changeUsername: '',
+        
         color: "",
         
         currentUser:{
@@ -238,7 +240,10 @@ var app = new Vue({
             var usn = app.signinUser
             stor.ref('users/').child(usn).once('value', function(snapshot){
                 if(snapshot.exists()){
-                    alert('exists')
+                    app.currentUser.name = usn
+                    app.currentUser.email = snapshot.val().email
+                    app.currentUser.photo = snapshot.val().photo
+                    app.currentUser.signedIn = true
                 }
                 else{
                     alert('Username Does Not Exist')
@@ -252,6 +257,19 @@ var app = new Vue({
             this.currentUser.email = "None"
             this.currentUser.signedIn = false
             console.log(this.currentUser.signedIn)
+        },
+// --- Function to change Username ---
+        updateUsername(){
+            var newusn = app.changeUsername
+            stor.ref('users/').child(app.currentUser.name).once('value', function(snapshote){
+                stor.ref('users/' + newusn).set({
+                    username: newusn,
+                    email: app.currentUser.email,
+                    photo: app.currentUser.photo
+                })
+            })
+            stor.ref('users/' + app.currentUser.name).remove()
+            app.currentUser.name = newusn
         },
 // --- Change color in the database
         background(){
