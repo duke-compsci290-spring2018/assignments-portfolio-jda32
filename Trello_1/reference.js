@@ -70,11 +70,14 @@ document.getElementById("datef").setAttribute("min", today);
 // --- Function to always have the background be the current background in the database.
 var storRefColor = stor.ref().child('color');
 storRefColor.on('value', function (snap){
-    console.log(snap.val());
     $('html').css({
                 'background-color':snap.val()
             });
 });
+
+
+
+
 // --- Vue stuff
 var app = new Vue({
     el: '#app',
@@ -86,17 +89,23 @@ var app = new Vue({
         neWcard: '',
         neWcardDueDate: '',
         neWcardDesc: '',
+        newCardCat: '',
         updDueDate: '',
+        newCateg:'',
         
         newuser: '',
         newemail: '',
         newpic: '',
         
         signinUser: '',
+        signinEmail: '',
         
         changeUsername: '',
+        changeEmail: '',
         
         color: "",
+        image: "",
+        catColor: "",
         
         currentUser:{
             name: "No one is logged in",
@@ -158,8 +167,9 @@ var app = new Vue({
                 visibility: true,
                 desc: app.neWcardDesc,
                 dueDate: app.neWcardDueDate,
-                diffDays: diffDays
-            })
+                diffDays: diffDays,
+                cat: app.newCardCat
+            });
         },
         removeCard(it, car){
             var id = it.id;
@@ -177,7 +187,8 @@ var app = new Vue({
                 visibility: false,
                 desc: car.desc,
                 dueDate: car.dueDate,
-                diffDays: car.diffDays
+                diffDays: car.diffDays,
+                cat: car.cat
             });
         },
         expandCard(it, car){
@@ -189,16 +200,17 @@ var app = new Vue({
                 visibility: true,
                 desc: car.desc,
                 dueDate: car.dueDate,
-                diffDays: car.diffDays
-            })
+                diffDays: car.diffDays,
+                cat: car.cat
+            });
         },
         hideList(it){
             var id = it.id;
-            stor.ref("items/"+ id +"/visibility").set(false)
+            stor.ref("items/"+ id +"/visibility").set(false);
         },
         expandList(it){
             var id = it.id;
-            stor.ref("items/" + id+ "/visibility").set(true)
+            stor.ref("items/" + id+ "/visibility").set(true);
         },
         updateDue(it, car){
             var old = car.dueDate;
@@ -217,69 +229,107 @@ var app = new Vue({
             var emai = app.newemail;
             var pic = app.newpic;
             if(usn === "" && emai === ""){
-                alert("Please Enter A Valid Username and Email")
+                alert("Please Enter A Valid Username and Email");
             }
             else if(usn === "" && emai !== ""){
-                alert("Please Enter A Valid Username")
+                alert("Please Enter A Valid Username");
             }
             else if(emai === "" && usn !== ""){
-                alert("Please Enter A Valid Email")
+                alert("Please Enter A Valid Email");
             }
             stor.ref("users/" + app.newuser).set({
                 username: usn,
                 email: emai,
                 photo: pic
             })
-            this.currentUser.photo = pic
-            this.currentUser.email = emai
-            this.currentUser.name = usn
-            this.currentUser.signedIn = true
+            this.currentUser.photo = pic;
+            this.currentUser.email = emai;
+            this.currentUser.name = usn;
+            this.currentUser.signedIn = true;
         },
-// --- Function to sign in WIP ---
+// --- Function to sign in w/ username ---
         signIn(){
-            var usn = app.signinUser
+            var usn = app.signinUser;
             stor.ref('users/').child(usn).once('value', function(snapshot){
                 if(snapshot.exists()){
-                    app.currentUser.name = usn
-                    app.currentUser.email = snapshot.val().email
-                    app.currentUser.photo = snapshot.val().photo
-                    app.currentUser.signedIn = true
+                    app.currentUser.name = usn;
+                    app.currentUser.email = snapshot.val().email;
+                    app.currentUser.photo = snapshot.val().photo;
+                    app.currentUser.signedIn = true;
                 }
                 else{
-                    alert('Username Does Not Exist')
+                    alert('Username Does Not Exist');
                 }
+            })
+        },
+// --- Function to sign in w/ email ---
+        signInEmail(){
+            var emai = app.signinEmail;
+            stor.ref('users/').orderByChild("email").equalTo(emai).once('value', function(snapshot){
+                if(!snapshot.val()){
+                    alert("Email Does Not Exist In Our Records");
+                }
+            })
+            var query = stor.ref("users").orderByKey();
+            query.once("value").then(function(snapshot){
+                snapshot.forEach(function(childSnapshot){
+                    var key = childSnapshot.key
+                    var childDataEmail = childSnapshot.child("email").val()
+                    if(childDataEmail === emai){
+                        app.currentUser.email = childDataEmail;
+                        app.currentUser.name = childSnapshot.child("name").val();
+                        app.currentUser.photo = childSnapshot.child("photo").val();
+                        app.currentUser.signedIn = true;
+                        
+                        return true;
+                    }
+                })
             })
         },
 // --- Function to sign out ---
         signOut(){
-            this.currentUser.photo = "./data/no_pic.jpg"
-            this.currentUser.name = "No one is logged in"
-            this.currentUser.email = "None"
-            this.currentUser.signedIn = false
-            console.log(this.currentUser.signedIn)
+            this.currentUser.photo = "./data/no_pic.jpg";
+            this.currentUser.name = "No one is logged in";
+            this.currentUser.email = "None";
+            this.currentUser.signedIn = false;
+            console.log(this.currentUser.signedIn);
         },
 // --- Function to change Username ---
         updateUsername(){
-            var newusn = app.changeUsername
+            var newusn = app.changeUsername;
             stor.ref('users/').child(app.currentUser.name).once('value', function(snapshote){
                 stor.ref('users/' + newusn).set({
                     username: newusn,
                     email: app.currentUser.email,
                     photo: app.currentUser.photo
                 })
-            })
-            stor.ref('users/' + app.currentUser.name).remove()
-            app.currentUser.name = newusn
+            });
+            stor.ref('users/' + app.currentUser.name).remove();
+            app.currentUser.name = newusn;
         },
-// --- Change color in the database
-        background(){
+        updateEmail(){
+            
+        },
+// --- Change Background color in the database
+        backgroundColor(){
             stor.ref("color/").set(app.color);
+            $('html').css('background-image', 'none');
+        },
+// --- Change Background image in the database
+        backgroundIm(){
+            stor.ref("image/").set(app.image);
+            stor.ref().child('image').on('value', function(snap){
+                $('html').css('background-image','url(' + snap.val() +')');
+            });
         },
         
 // --- Function to order the Cards by Due Date: WiP
         orderDue(it){
             var id = it.id;
             stor.ref('items/' + it.id + "/cards").orderByChild('dueDate');
+        },
+        newCategory(){
+            
         }
         
     }

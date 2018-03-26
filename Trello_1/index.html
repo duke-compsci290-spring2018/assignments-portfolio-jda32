@@ -32,8 +32,14 @@
                 <h3>Current Email: {{ currentUser.email }}</h3>
             </header>
             <div id = "colorControl">
-                <input class="change-background" placeholder="Background Color" v-model="color">
-                <button id="new-color" class="color-button" type="button" @click="background()">Change Color</button>
+                <p> Input a new background color:
+                    <input class="change-background" type="color" v-model="color">
+                    <button id="new-color" class="color-button" type="button" @click="backgroundColor()">Change Color</button>
+                </p>
+                <p>OR Input a new background image:
+                    <input class="change-background" placeholder="Background Image" v-model="image">
+                    <button id="new-color" class="color-button" type="button" @click="backgroundIm()">Change Background Image</button>
+                </p>
             </div>
             <br>
             <div id = "userControl">
@@ -47,6 +53,10 @@
                     <input class="sign-in" placeholder="Sign In w/ Username" v-model="signinUser">
                     <button id="old-user" class="old-user-button" type="button" @click="signIn()">Sign In</button>
                 </div>
+                <div id = "SignIn" v-if="!currentUser.signedIn">
+                    <input class="sign-in" placeholder="Sign In w/ Email" v-model="signinEmail">
+                    <button id="old-user" class="old-user-button" type="button" @click="signInEmail()">Sign In</button>
+                </div>
                 <div id = "SignOut" v-if="currentUser.signedIn">
                     <button id="sign-out" class="sign-out" type="button" @click="signOut()">Sign Out</button>
                 </div>
@@ -55,11 +65,19 @@
                     <input class="change-username" placeholder="Update Username" v-model="changeUsername">
                     <button id="change-user" class="change" type="button" @click="updateUsername()">Change Username</button>
                 </div>
+                <div id = "changeEmail" v-if="currentUser.signedIn">
+                    <input class="change-username" placeholder="Update Email" v-model="changeEmail">
+                    <button id="change-user" class="change" type="button" @click="updateEmail()">Change Email</button>
+                </div>
                 <br>
             </div>
-            <div id = "itemControl">
-                <input class="add-new-item" placeholder="New Item" v-model="newitem">
-                <button id="new-item" class="item-button" type="button" @click="newItem()">Add Item</button>
+            <div id = "ListControl">
+                <input class="add-new-item" placeholder="New List" v-model="newitem">
+                <button id="new-item" class="item-button" type="button" @click="newItem()">Add List</button>
+                <br>
+                <input class="new-category" placeholder="New Category Name" v-model="newCateg">
+                <input class="new-category" type="color" v-model="catColor">
+                <button id="new-category" class="item-button" type="button" @click="newCategory()">Add Category</button>
             </div>
             <div id ="lists">
                 <ul>
@@ -68,27 +86,27 @@
                             <button class="destroy" @click="removeItem(item)">Destroy List</button>
                             <button id="hideList" class="list-button" type="button" @click="hideList(item)" v-if="item.visibility">Hide List</button>
                             <button id="expandList" class="list-button" type="button" @click="expandList(item)" v-if="!item.visibility">Expand List</button>
-                            <br>
+                            <p>Add a new card:</p>
                             <input class="add-new-card" placeholder="New Card Name" v-model="neWcard" v-if="item.visibility">
                             <input class="add-new-card-desc" placeholder="New Card Desc" v-model="neWcardDesc" v-if="item.visibility">
                             <input class="add-new-card-date" id="datefield" type="date" placeholder="New Card DueDate" v-model="neWcardDueDate" v-if="item.visibility">
                             <button id="new-card" class="list-button" type="button" @click="newcard(item)" v-if="item.visibility">Add Card</button>
-                            <br>
-                        <button id="order-by-due-date" class="list-button" type="button" @click="orderDue(item)" v-if="item.visibility">Order By Due Date</button>
-                        <br>
-                        <ul v-if = "item.visibility">
-                            <br>
-                            <li v-for="card in item.cards">{{card.task}}
-                                <button class="destroy" @click="removeCard(item,card)">Destroy Card</button>
-                                <button class="Hide" @click="hideCard(item,card)" v-if="card.visibility">Hide</button>
-                                <button class="Expand" @click="expandCard(item,card)" v-if="!card.visibility">Expand</button>
-                                <div class = item.id id = card.task v-if="card.visibility">
-                                    <p>Description: {{card.desc}}</p>
-                                    <p>Created: {{card.date}}</p>
-                                    <p>Due Date: {{card.dueDate}} <input class="update-card-date" id="datef" type="date" placeholder="Update Due Date" v-model="updDueDate"><button class="Update-Due-Date" @click="updateDue(item,card)">Update Due Date</button></p>
-                                    <p>Days Until Due: {{card.diffDays}}</p>
-                                </div>
-                            </li>
+                            <!-- <button id="order-by-due-date" class="list-button" type="button" @click="orderDue(item)" v-if="item.visibility">Order By Due Date</button> -->
+                            <ul v-if = "item.visibility">
+                                <br>
+                                <li v-for="card in item.cards">{{card.task}}
+                                    <button class="old-card-destroy" @click="removeCard(item,card)">Destroy Card</button>
+                                    <button class="old-card-hide" @click="hideCard(item,card)" v-if="card.visibility">Hide</button>
+                                    <button class="old-card-expand" @click="expandCard(item,card)" v-if="!card.visibility">Expand</button>
+                                    <div class = item.id id = card.task v-if="card.visibility">
+                                        
+                                        <p>Category: {{card.cat}}</p>
+                                        <p>Description: {{card.desc}}</p>
+                                        <p>Created: {{card.date}}</p>
+                                        <p>Due Date: {{card.dueDate}} <input class="update-card-date" id="datef" type="date" placeholder="Update Due Date" v-model="updDueDate"><button class="Update-Due-Date" @click="updateDue(item,card)">Update Due Date</button></p>
+                                        <p>Days Until Due: {{card.diffDays}}</p>
+                                    </div>
+                                </li>
                             <br>
                         </ul>
                     </li>
