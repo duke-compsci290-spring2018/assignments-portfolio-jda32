@@ -1,56 +1,39 @@
 {
-  "color" : "yellow",
+  "color" : "#00ffff",
+  "image" : "https://upload.wikimedia.org/wikipedia/commons/7/76/Ed_g2s_background.jpg",
   "items" : {
-    "Apple" : {
+    "dfksalm" : {
       "cards" : {
-        "Apple" : {
-          "date" : "20:27 2018-03-09",
-          "desc" : "Something",
-          "diffDays" : 14,
-          "dueDate" : "2018-03-23",
-          "task" : "Apple",
-          "visibility" : true
-        },
-        "Banana" : {
-          "date" : "20:28 2018-03-09",
-          "desc" : "Else",
-          "diffDays" : 12,
-          "dueDate" : "2018-03-21",
-          "task" : "Banana",
-          "visibility" : false
-        },
-        "Blitz" : {
-          "date" : "20:29 2018-03-09",
-          "desc" : "Zoo",
-          "diffDays" : 1,
-          "dueDate" : "2018-03-10",
-          "task" : "Blitz",
-          "visibility" : true
-        },
-        "Crepe" : {
-          "date" : "20:28 2018-03-09",
-          "desc" : "Hope",
-          "diffDays" : 21,
+        "dsaknm" : {
+          "date" : "21:56 2018-03-26",
+          "desc" : "aefe",
+          "diffDays" : 4,
           "dueDate" : "2018-03-30",
-          "task" : "Crepe",
-          "visibility" : false
+          "events" : {
+            "Something else" : "Something else",
+            "Testing" : "Testing",
+            "Yeet" : "Yeet",
+            "cvbjnk" : "cvbjnk",
+            "dsa" : "dsa"
+          },
+          "picture" : "https://vignette.wikia.nocookie.net/epicrapbattlesofhistory/images/6/69/Charizard.jpg/revision/latest?cb=20160425213300",
+          "task" : "dsaknm",
+          "visibility" : true
         }
       },
       "completed" : false,
       "hide" : false,
-      "id" : "Apple",
-      "title" : "Apple",
-      "visibility" : false
-    },
-    "dkf" : {
-      "completed" : false,
-      "hide" : false,
-      "id" : "dkf",
-      "title" : "dkf",
+      "id" : "dfksalm",
+      "title" : "dfksalm",
       "visibility" : true
     }
   },
   "users" : {
+    "Jason" : {
+      "email" : "amatchedplayr@gmail.com",
+      "photo" : "https://vignette.wikia.nocookie.net/epicrapbattlesofhistory/images/6/69/Charizard.jpg/revision/latest?cb=20160425213300",
+      "username" : "Jason"
+    },
     "aaa" : {
       "email" : "asdfadf@gmail.com",
       "photo" : "https://vignette.wikia.nocookie.net/gurennlagann/images/2/21/Gurren_Lagann.png/revision/latest?cb=20150705084059",

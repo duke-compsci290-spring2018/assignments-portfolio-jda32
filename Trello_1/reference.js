@@ -92,6 +92,7 @@ var app = new Vue({
         newCardCat: '',
         updDueDate: '',
         newCateg:'',
+        newCardPic:'',
         
         newuser: '',
         newemail: '',
@@ -103,9 +104,17 @@ var app = new Vue({
         changeUsername: '',
         changeEmail: '',
         
-        color: "",
+        color: "#ff0000",
         image: "",
-        catColor: "",
+        catColor: "#ff0000",
+        
+        oldCardPic:'',
+        oldCardDesc:'',
+        oldCardCat:'',
+        
+        newTask:'',
+        newTaskItem:'',
+        
         
         currentUser:{
             name: "No one is logged in",
@@ -168,7 +177,7 @@ var app = new Vue({
                 desc: app.neWcardDesc,
                 dueDate: app.neWcardDueDate,
                 diffDays: diffDays,
-                cat: app.newCardCat
+                picture: app.newCardPic
             });
         },
         removeCard(it, car){
@@ -188,7 +197,7 @@ var app = new Vue({
                 desc: car.desc,
                 dueDate: car.dueDate,
                 diffDays: car.diffDays,
-                cat: car.cat
+                picture: car.picture
             });
         },
         expandCard(it, car){
@@ -201,7 +210,7 @@ var app = new Vue({
                 desc: car.desc,
                 dueDate: car.dueDate,
                 diffDays: car.diffDays,
-                cat: car.cat
+                picture: car.picture
             });
         },
         hideList(it){
@@ -307,8 +316,10 @@ var app = new Vue({
             stor.ref('users/' + app.currentUser.name).remove();
             app.currentUser.name = newusn;
         },
+// --- Function to change email ---
         updateEmail(){
-            
+            stor.ref('users/' + app.currentUser.name + '/email').set(app.changeEmail);
+            app.currentUser.email = app.changeEmail;
         },
 // --- Change Background color in the database
         backgroundColor(){
@@ -323,14 +334,29 @@ var app = new Vue({
             });
         },
         
+// ----------------- UPDATE CARD STUFF ---------------------------
+        
+// --- Update Card Picture ---
+        
+        updateCardPic(it, car){
+            stor.ref('items/' + it.id + "/cards/" + car.task +"/picture").set(app.oldCardPic)
+        },
+        
 // --- Function to order the Cards by Due Date: WiP
         orderDue(it){
             var id = it.id;
             stor.ref('items/' + it.id + "/cards").orderByChild('dueDate');
         },
+        
+// --- Function to add tasks ---
+        newEvent(it, car){
+            stor.ref('items/' + it.id + "/cards/" + car.task + "/events/" +app.newTaskItem).set(app.newTaskItem);
+            
+        },
+        
         newCategory(){
             
-        }
-        
+        } 
     }
-})
+});
+
