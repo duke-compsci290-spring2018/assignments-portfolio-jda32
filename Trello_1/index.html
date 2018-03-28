@@ -22,6 +22,7 @@
         <script src="reference.js" async></script>
         <title>Let's Make a Project</title>
         <link rel="stylesheet" href="style.css">
+        
     </head>
     <body>
         <div id = "app">
@@ -42,6 +43,12 @@
                 </p>
             </div>
             <br>
+            
+            
+<!--- Features for user control like signing in, up, and changing info ---->
+            
+            
+    
             <div id = "userControl">
                 <div id = "newUserControl" v-if="!currentUser.signedIn">
                     <input class="add-new-user" placeholder="New Username" v-model="newuser">
@@ -71,6 +78,13 @@
                 </div>
                 <br>
             </div>
+            
+            
+            
+<!---   Features where you add the lists, change categories, and filters to be implemented --->
+            
+            
+            
             <div id = "ListControl">
                 <div id ="New Item Control">
                     <input class="add-new-item" placeholder="New List" v-model="newitem">
@@ -81,10 +95,23 @@
                     <input class="new-category" type="color" value="#ff0000" v-model="catColor">
                     <button id="new-category" class="item-button" type="button" @click="newCategory()">Add Category</button>
                 </div>
+                
+                <div id = "Select Category Control">
+                    <select v-model="category">
+                        <option>All</option>
+                        <option>Uncategorized</option>
+                        <option v-for="category in categories">{{category.name}}</option>
+                    </select>
+                </div>
                 <div id ="Filter Category">
-                    
                 </div>
             </div>
+
+            
+<!--- This is where the lists start --->
+            
+            
+            
             <div id ="lists">
                 <ul>
                     <li id ="listList" v-for="item in items">
@@ -101,26 +128,67 @@
                             <!-- <button id="order-by-due-date" class="list-button" type="button" @click="orderDue(item)" v-if="item.visibility">Order By Due Date</button> -->
                             <ul v-if = "item.visibility">
                                 <br>
-                                <li id="cardList" v-for="card in item.cards">{{card.task}}
+                                
+<!--- Card Stuff is all below here --->                                
+                                
+                                
+                                <ul class="cardDiv" v-for="card in item.cards" :id="card.category">{{card.task}}
                                     <button class="old-card-destroy" @click="removeCard(item,card)">Destroy Card</button>
                                     <button class="old-card-hide" @click="hideCard(item,card)" v-if="card.visibility">Hide</button>
                                     <button class="old-card-expand" @click="expandCard(item,card)" v-if="!card.visibility">Expand</button>
-                                    <div class = item.id id = card.task v-if="card.visibility">
+<!---  WIP                          <div class="changeCardList v-if="card.visibility>
+                                        <select v-model="moveThisCard">
+                                            <option v-for="item in items">{{item.id}}</option>
+                                        </select>
+                                        <button class = "changeList" type="button" @click="changeCardList(item,card)">Change List</button>
+                                    </div>
+--->
+                                    <div class = "item.id" id = "card.task" v-if="card.visibility">
                                         <img id=cardPic :src = card.picture>
                                         <input id="update-card-pic" placeholder="Update Card Picture" v-model="oldCardPic" v-if="card.visibility">
                                         <button class="update-card-pic" type="button" @click="updateCardPic(item,card)">Update Image</button>
-                                        <p>Category: {{card.cat}}</p>
-                                        <p>Description: {{card.desc}}</p>
-                                        <p>Tasks To Do:</p>
+                   
                                         
+                                        <!--- Card Categories --->
+                                        
+                                        
+                                        <p>Category: {{card.category}}</p>
+                                        <p>Change Card Category:
+                                            <select v-model="categorize">
+                                                <option>Uncategorized</option>
+                                                <option v-for="category in categories">{{category.name}}</option>
+                                            </select>
+                                            <button class = "categorize" type="button" @click="categorizeCard(item, card)">Categorize Card</button>
+                                        </p>
+                                        
+                                        <!--- Card Description --->
+                                        
+                                        <p>Description: {{card.desc}}</p>
+                                        <input id="update-card-desc" placeholder="Update Description" v-model="oldCardDesc">
+                                        <button class="update-card-desc" type="button" @click="updateCardDesc(item, card)">Change Description</button>
+                                        
+                                        <!--- Card ToDo List --->
+                                        
+                                        <p>Tasks To Do:</p>
+                                        <ul class="todo-list">
+                                            <li class="todo" v-for="event in card.events">
+                                                {{event.name}}
+                                                <button class="delete-task" @click="deleteTask(item,card,event)" v-if="event.visibility">X</button>
+                                            </li>
+                                        </ul>
                                         <input id="addEvent" placeholder="Add A Task" v-model="newTaskItem">
                                         <button class="Add Card Task" type="button" @click="newEvent(item,card)">Add Task</button>
+                                        
+                                                                           
+                                        <!--- Card Date info & controls --->
+                                        
+                                        
                                         <p>Created: {{card.date}}</p>
                                         <p>Due Date: {{card.dueDate}} 
                                         <input class="update-card-date" id="datef" type="date" placeholder="Update Due Date" v-model="updDueDate"><button class="Update-Due-Date" @click="updateDue(item,card)">Update Due Date</button></p>
                                         <p>Days Until Due: {{card.diffDays}}</p>
                                     </div>
-                                </li>
+                                </ul>
                             <br>
                         </ul>
                     </li>

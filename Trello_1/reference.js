@@ -13,6 +13,7 @@ var stor = firebase.initializeApp(config).database();
 var itemsRef = stor.ref('items');
 var userRef = stor.ref('users');
 var colorRef = stor.ref('color');
+var catRef = stor.ref('categories');
 
 Vue.use(VueFire);
 
@@ -52,6 +53,17 @@ function getToday(){
     var yy = now.getFullYear();
     return (+yy+"-"+mm+"-"+dd);
 }
+
+// The following is a function to take a snapshot of old record 
+// and move it to a new record
+// Credit: katowulf at https://gist.github.com/katowulf/6099042
+function moveFbRecord(oldRef, newRef) {
+     oldRef.once('value', function(snap)  { 
+          newRef.set( snap.val(), function(error) {  
+               if( !error ) {  oldRef.remove(); }
+          });
+     });
+}
 var today = new Date();
 var dd = today.getDate();
 var mm = today.getMonth()+1; //January is 0!
@@ -75,12 +87,10 @@ storRefColor.on('value', function (snap){
             });
 });
 
-
-
-
 // --- Vue stuff
 var app = new Vue({
     el: '#app',
+// -------------------------- DATA DATA DATA DATA DATA --------------------
     data: {
         visibility: 'true',
         newitem: '',
@@ -115,6 +125,12 @@ var app = new Vue({
         newTask:'',
         newTaskItem:'',
         
+        lists:'',
+        moveThisCard:'',
+        
+        categorize:'Uncategorized',
+        category:'All',
+        
         
         currentUser:{
             name: "No one is logged in",
@@ -127,9 +143,13 @@ var app = new Vue({
     firebase: {
         items: itemsRef,
         users: userRef,
-        colors: colorRef
+        colors: colorRef,
+        categories: catRef
     },
+// ------------------------------------------ FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS ----------------------
     methods: {
+// ----------- LIST STUFF -------------
+// --- New List ---
         newItem(){
             var id = app.newitem;
             if(id === ""){
@@ -151,12 +171,14 @@ var app = new Vue({
                 visibility: true
             });
         },
+// --- Remove List ---
         removeItem(it){
             var id = it.id;
             stor.ref("items/"+ id).set(
                 null
             );
         },
+// --- Creates a new card within a list ---
         newcard(it){
             var now = getDate();
             console.log(now);
@@ -177,9 +199,12 @@ var app = new Vue({
                 desc: app.neWcardDesc,
                 dueDate: app.neWcardDueDate,
                 diffDays: diffDays,
-                picture: app.newCardPic
+                picture: app.newCardPic,
+                category: "Uncategorized",
+                color: 'beige'
             });
         },
+// --- Delete the card ---
         removeCard(it, car){
             var id = it.id;
             var carid = car.task;
@@ -187,31 +212,16 @@ var app = new Vue({
                 null
             );
         },
+// --- VISIBILITY FUNCTIONS FOR CARD AND LIST ---
         hideCard(it, car){
             var id = it.id;
             var carid = car.task;
-            stor.ref("items/"+ id +"/cards/" + car.task).set({
-                task: car.task,
-                date: car.date,
-                visibility: false,
-                desc: car.desc,
-                dueDate: car.dueDate,
-                diffDays: car.diffDays,
-                picture: car.picture
-            });
+            stor.ref("items/"+ id +"/cards/" + car.task + "/visibility").set(false);
         },
         expandCard(it, car){
             var id = it.id;
             var carid = car.task;
-            stor.ref("items/"+ id +"/cards/" + car.task).set({
-                task: car.task,
-                date: car.date,
-                visibility: true,
-                desc: car.desc,
-                dueDate: car.dueDate,
-                diffDays: car.diffDays,
-                picture: car.picture
-            });
+            stor.ref("items/"+ id +"/cards/" + car.task + "/visibility").set(true);
         },
         hideList(it){
             var id = it.id;
@@ -221,6 +231,7 @@ var app = new Vue({
             var id = it.id;
             stor.ref("items/" + id+ "/visibility").set(true);
         },
+// --- Update Due Date for the card ---
         updateDue(it, car){
             var old = car.dueDate;
             var upd = app.updDueDate;
@@ -301,7 +312,6 @@ var app = new Vue({
             this.currentUser.name = "No one is logged in";
             this.currentUser.email = "None";
             this.currentUser.signedIn = false;
-            console.log(this.currentUser.signedIn);
         },
 // --- Function to change Username ---
         updateUsername(){
@@ -339,7 +349,7 @@ var app = new Vue({
 // --- Update Card Picture ---
         
         updateCardPic(it, car){
-            stor.ref('items/' + it.id + "/cards/" + car.task +"/picture").set(app.oldCardPic)
+            stor.ref('items/' + it.id + "/cards/" + car.task +"/picture").set(app.oldCardPic);
         },
         
 // --- Function to order the Cards by Due Date: WiP
@@ -350,12 +360,65 @@ var app = new Vue({
         
 // --- Function to add tasks ---
         newEvent(it, car){
-            stor.ref('items/' + it.id + "/cards/" + car.task + "/events/" +app.newTaskItem).set(app.newTaskItem);
+            stor.ref('items/' + it.id + "/cards/" + car.task + "/events/" +app.newTaskItem).set({
+                name: app.newTaskItem,
+                visibility: true
+            });
             
         },
-        
-        newCategory(){
+        updateCardDesc(it, car){
+            console.log(app.oldCardDesc);
+            stor.ref('items/' + it.id + "/cards/" + car.task + "/desc").set(app.oldCardDesc);
+        },
+// --- Function to delete a task to the Todo List of a specific card ---
+        deleteTask(it, car, eve){
+            stor.ref('items/' +it.id + "/cards/" + car.task + "/events/" + eve.name).set(null)
+        },
+// --- Function to change the list the card is in ---
+// --- Function I want to implement but probably wont have the time by 3/28/19 ----
+/*        changeCardList(it, car){
+            var curCar = stor.ref("items/" + it.id + "/cards/" + car);
+            console.log(curCar);
+            var place;
+            for (var child in app.items){
+                place = app.items[child];
+                if(place.title === app.moveThisCard){
+                    break;
+                }
+            };
+            var newCar = stor.ref("items/" + place.id + "/cards/" + car);
+            moveFbRecord(curCar, newCar); 
+        },
+*/
+// --- Function to categorize each card and update its color ---
+        categorizeCard(it, car){
+            stor.ref('categories').child(app.categorize).once('value', function(snapshot){
+                if(snapshot.exists()){
+                    stor.ref('items/' + it.id + "/cards/" + car.task + "/category").set(snapshot.val().name);
+                    stor.ref('items/' + it.id + "/cards/" + car.task + "/color").set(snapshot.val().color);
+                    $('#'+app.categorize).css({
+                        'background-color': snapshot.val().color
+                    });
+                }
+                else{
+                    stor.ref('items/' + it.id + "/cards/" + car.task + "/category").set("Uncategorized");
+                    stor.ref('items/' + it.id + "/cards/" + car.task + "/color").set(null);
+                    $('#'+"Uncategorized").css({
+                        'background-color': 'beige'
+                    });
+                };
+            });
             
+            
+        },
+// --- Create a new category with color ---
+        newCategory(){
+            var cat = app.newCateg;
+            var catColor = app.catColor;
+            stor.ref('categories/' + cat).set({
+                name: cat,
+                color: catColor
+            })
         } 
     }
 });
