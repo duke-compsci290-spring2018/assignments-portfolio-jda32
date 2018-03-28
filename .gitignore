@@ -59,3 +59,14 @@ typings/
 
 # next.js build output
 .next
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# System specific files
+.DS_Store
+
