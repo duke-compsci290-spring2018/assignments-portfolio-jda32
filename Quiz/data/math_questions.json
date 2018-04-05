@@ -31,5 +31,9 @@
             "correctAnswer": 4,
             "completed": false
         }
-    ]
+    ],
+    "tries": 0,
+    "correct": 0,
+    "firstTime": 0,
+    "finished": false
 }
