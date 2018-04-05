@@ -5,11 +5,12 @@
         <ul>
             <button @click="choseMathQuiz()">Math</button>
             <button @click="choseDukeQuiz()">Duke</button>
+            <button @click="choseGameQuiz()">Video Games</button>
         </ul>
-        <h3 v-if="prevQuiz">Previous Quiz: {{prevQuiz.title}} </br> Score: {{prevQuiz.correct}}  out of {{prevQuiz.tries}}</h3>
+        <h3 v-if="prevQuiz">Previous Quiz: {{prevQuiz.title}} </br> Score: {{prevQuiz.correct}} correct out of {{prevQuiz.tries}} total attempts.</h3>
     </div>
     <div id="quiz" v-if="quizChosen">
-            <dukeQuiz
+            <dukeQuiz v-if="currentQuiz.title === 'Duke Quiz'"
                 :currentNumber="currentQuestion"
                 :theQuiz="currentQuiz"
                 :allResponses="responses"
@@ -19,8 +20,35 @@
                 :prevQuest="prevNumber"
                 :selectQuest="choseQuestion"
                 :submit="submitAnswer"
-                :small="smallest">
+                :small="smallest"
+                :col="color">
             </dukeQuiz>
+            <mathQuiz v-if="currentQuiz.title === 'Math Quiz'"
+                :currentNumber="currentQuestion"
+                :theQuiz="currentQuiz"
+                :allResponses="responses"
+                :chosen="currentResponse"
+                :completedQuests="completedQuestions"
+                :nextQuest="addCurrentNumber"
+                :prevQuest="prevNumber"
+                :selectQuest="choseQuestion"
+                :submit="submitAnswer"
+                :small="smallest"
+                :col="color">
+            </mathQuiz>
+            <gameQuiz v-if="currentQuiz.title === 'Video Game Quiz'"
+                :currentNumber="currentQuestion"
+                :theQuiz="currentQuiz"
+                :allResponses="responses"
+                :chosen="currentResponse"
+                :completedQuests="completedQuestions"
+                :nextQuest="addCurrentNumber"
+                :prevQuest="prevNumber"
+                :selectQuest="choseQuestion"
+                :submit="submitAnswer"
+                :small="smallest"
+                :col="color">
+            </gameQuiz>
         <!-- <button v-if="currentQuestion > 0" @click="prevNumber()">Prev Question</button> -->
         <!-- <button v-if="currentQuestion + 1 < currentQuiz.questions.length" @click="addCurrentNumber()">Next Question</button> -->
         <button v-if="completedQuestions.length+1 === currentQuiz.questions.length" @click="finishQuiz()">Finish Quiz</button>
@@ -31,8 +59,10 @@
 <script>
     import math from '../data/math_questions.json'
     import duke from '../data/duke_questions.json'
-    import mathQuiz from './components/mathQuiz'
     import dukeQuiz from './components/dukeQuiz'
+    import mathQuiz from './components/mathQuiz'
+    import game from '../data/game_questions.json'
+    import gameQuiz from './components/gameQuiz'
 export default {
   name: 'app',
   data () {
@@ -40,7 +70,8 @@ export default {
       msg: 'Select a quiz to take:',
       myMath: math,
       myDuke: duke,
-      quizes: [math,duke],
+      myGame: game,
+      quizes: [math,duke,game],
       selectQuiz: true,
       quizChosen: false,
       currentQuiz: '',
@@ -53,12 +84,14 @@ export default {
       remainingQuestions: [],
       tries: 0,
       correct: 0,
-      smallest: 0
+      smallest: 0,
+      color: 'green'
     }
   },
   components:{
     dukeQuiz,
-    mathQuiz
+    mathQuiz,
+    gameQuiz
   },
   methods:{
     choseMathQuiz(){
@@ -70,6 +103,7 @@ export default {
             this.remainingQuestions.push(i)
             console.log(i)
         }
+        console.log(this.currentQuiz.title)
         console.log(this.remainingQuestions)
         console.log(this.currentQuiz)
     },
@@ -82,18 +116,32 @@ export default {
             this.remainingQuestions.push(i)
             console.log(i)
         }
+        console.log(this.currentQuiz.title)
+        console.log(this.currentQuiz.questions[0].question)    
+    },
+    choseGameQuiz(){
+        this.selectQuiz=false
+        this.quizChosen=true
+        this.currentQuizMsg=this.myGame.title
+        this.currentQuiz=this.myGame
+        for(var i = 0; i < this.currentQuiz.questions.length; i++){
+            this.remainingQuestions.push(i)
+            console.log(i)
+        }
         console.log(this.currentQuiz.questions[0].question)    
     },
     returnSelection(){
         this.quizChosen=false
         this.selectQuiz=true
     },
+    // Function to go to the next unsolved problem, does not record answer
     addCurrentNumber: function(e){
             this.currentQuestion = this.currentQuestion+1
             while(this.completedQuestions.includes(this.currentQuestion)){
                 this.currentQuestion = this.currentQuestion+1
             } 
     },
+    // Function to go to previous unsolved problem, does not record answer
     prevNumber(){
         var dummy = this.currentQuestion
         console.log("Dummy:" + dummy)
@@ -108,16 +156,19 @@ export default {
             dummy = dummy - 1
         }
     },
+    // choose what unsolved question you want to go to
     choseQuestion(e){
         this.currentQuestion = e
     },
     submitAnswer(e){
         console.log(this.currentQuiz.questions[this.currentQuestion].correctAnswer)
         console.log("E: " + e)
+        // A catch in case something doesnt work never had to use it though
         if(this.currentQuiz.questions[this.currentQuestion].completed === true){
             alert("Already Answered Question")
         }
         else{
+            // Check if answer is correct in a round about manner and then gets and updates info
             if(this.currentQuiz.questions[this.currentQuestion].correctAnswer === this.currentQuiz.questions[this.currentQuestion].choices.indexOf(e)){
                 alert("CORRECT")
                 this.correct++
@@ -146,6 +197,7 @@ export default {
                     }
                     this.smallest = temp
                 }
+                // That was the last question go back to the start screen reset everything and display results
                 if(this.remainingQuestions.length === 0){
                     console.log("Finished")
                     this.currentQuiz.tries = this.tries
@@ -170,6 +222,7 @@ export default {
             }
         }
     },
+    // function no longer used
     finishQuiz(){
         this.currentQuestion = 0
     },
@@ -182,6 +235,10 @@ export default {
 
 
 <style lang="scss">
+@import "./assets/css/theme.scss";
+html {
+    background-color:$back-color
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -189,6 +246,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  background-color:#9ad3de
 }
 
 h1, h2 {

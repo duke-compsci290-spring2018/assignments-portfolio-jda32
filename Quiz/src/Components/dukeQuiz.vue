@@ -39,10 +39,24 @@ export default {
         'prevQuest',
         'selectQuest',
         'submit',
-        'small'
+        'small',
+        'col'
     ]
 }
 
 </script>
+
+<style>
+@import "../assets/css/theme.scss";
+html{
+    background-color: #e05038
+}
+#app{
+    background-color: #e6af4b
+}
+li:hover{
+    border-style: 1px dotted blue;
+}
+</style>
 
 

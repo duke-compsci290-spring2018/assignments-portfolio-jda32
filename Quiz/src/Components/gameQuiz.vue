@@ -49,12 +49,15 @@ export default {
 <style>
 @import "../assets/css/theme.scss";
 html{
-    background-color: #e1e8f0;
+    background-color: #6534ff
 }
 #app{
-    background-color: #e62739;
+    background-color: #62bcfa
+}
+#responses{
+    color: #fccdd3
 }
 li:hover{
-    border-style: 1px double #c9c9c9;
+    border-style: 1px solid red;
 }
 </style>

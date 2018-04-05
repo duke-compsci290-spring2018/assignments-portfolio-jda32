@@ -1,0 +1,45 @@
+{
+    "title": "Video Game Quiz",
+    "questions":[
+        {
+            "question": "What was Mario's name in Donkey Kong?",
+            "choices": ["Mr. Plumber", "Antonio", "Jumpman", "Junpei", "Luigi", "Plumberman"],
+            "correctAnswer": 2,
+            "completed":false
+        },
+        {
+            "question": "Which of these characters never speaks?",
+            "choices": ["Nathan Drake", "Mario", "Master Chief", "Link", "Princess Peach"],
+            "correctAnswer": 3,
+            "completed": false
+        },
+        {
+            "question": "What does Pokemon stand for?",
+            "choices": ["Pocket Monsters", "Pocket Collectibles", "Portable Monsters", "Pokeable Monsters"],
+            "correctAnswer": 0,
+            "completed": false
+        },
+        {
+            "question": "What was your ship's name in Mass Effect 2?",
+            "choices": ["Hyperion", "Javelin", "Valkyrie", "SSV Normandy", "Black Pearl"],
+            "correctAnswer": 3,
+            "completed": false
+        },
+        {
+            "question": "What console was Super Mario Sunshine released on?",
+            "choices": ["Playstation", "Nintendo 64", "Nintendo Wii", "Nintendo DS", "Gamecube", "Xbox 360"],
+            "correctAnswer": 4,
+            "completed": false
+        },
+        {
+            "question": "How many Fire Emblem games have been released including remakes?",
+            "choices": [5,16,23,9,18,12,7,15,20,11,2],
+            "correctAnswer": 7,
+            "completed": false
+        }
+    ],
+    "tries": 0,
+    "correct": 0,
+    "firstTime": 0,
+    "finished": false
+}
