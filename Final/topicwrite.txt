@@ -4,3 +4,7 @@ Men's NCAA college basketball's post-season tournament, often referred to as Mar
 	For additional ideas, remember that statistically speaking after the third-round higher seeds do not win more than a majority of those games. To account for this, it may also be good to look at expert analysis data for prediction instead of just seed rankings. Some rankings that could be included would be: KenPom https://kenpom.com/#  and RPI https://www.ncaa.com/rankings/basketball-men/d1/ncaa-mens-basketball-rpi . Again, these would probably have to be obtained through web-scraping. So, referencing back to the users where they could create their own bracket based off of statistical data, they could also have the option to create a bracket based off either KenPom or RPI, or maybe a combination of them (higher seed probability for the first three rounds and then KenPom or RPI for the last three). Again, they would be able to compare these brackets to what their actual scores would have been. Lastly, it would also be interesting to do the same for the women's tournament.
 	So, in conclusion, registered users would be able to randomly generate completed brackets for any year based off of different parameters (statistical, expert analysis, or a combination) and then be able to see what their point total would have been. With this, bettors will in theory be able to increase their odds in creating a winning bracket. 
 M McCarthy 'Gambling Madness Can Snag Court Fans' (2007) http://www.usatoday.com/sports/2007-03-27-gambling-cover_n.htm [June 21st 2007]
+
+
+
+

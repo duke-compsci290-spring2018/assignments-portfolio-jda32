@@ -1,0 +1,52 @@
+"years":[
+    {
+        "Year": 2017,
+        "Games":[
+            {
+                "date": "2015-03-19",
+                "home": {
+                    "seed": 14,
+                    "team": "Panthers",
+                    "college": "Georgia State",
+                    "conference": "Big 12",
+                    "score": 57
+                },
+                "away": {
+                "seed": 3,
+                "team": "Bears",
+                "college": "Baylor",
+                "conference": "Big 12",
+                "score": 56
+                },
+                "label": "Second Round"
+            }
+        ],
+        },
+    {
+        "Year":
+    }
+
+]
+
+"statistics":{
+    "N":[
+    {
+        "round":1,
+        "seed 1": 4.0,
+        "seed 2": 3.6,
+    },
+    {
+    
+    }],
+    "P":[
+    {
+        "round":1,
+        "seed 1": 1.0,
+        "seed 2": 0.96,
+    },
+    {
+    
+    }]
+    
+    
+}
