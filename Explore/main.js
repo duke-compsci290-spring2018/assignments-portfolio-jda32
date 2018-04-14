@@ -1,7 +1,7 @@
 var board = d3.select("body").append("svg").attr("height", "500px").attr("width", "750px")
 
-var movies = d3.csv("/data/movies_raw.csv")
-var bag_of_words = d3.csv("/data/bag_of_words.csv")
+// var movies = d3.csv("/data/movies_raw.csv")
+// var bag_of_words = d3.csv("/data/bag_of_words.csv")
 var years = []
 var names = []
 var avg_rating = []
