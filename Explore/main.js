@@ -21,7 +21,7 @@ d3.select("body").style("background-color", "yellow").transition().delay(1000).s
 
 
 // Movie stuff
-d3.csv("/data/movies_raw.csv", function(data){
+d3.csv("./data/movies_raw.csv", function(data){
     
     // Obtain the information regarding the movies
     years.push(data.year)
@@ -79,7 +79,7 @@ d3.csv("/data/movies_raw.csv", function(data){
     }
 })
 
-d3.csv("/data/bag_of_words.csv", function(data){
+d3.csv("./data/bag_of_words.csv", function(data){
     words = Object.keys(data)
     occurence = Object.values(data)
     total = 0
