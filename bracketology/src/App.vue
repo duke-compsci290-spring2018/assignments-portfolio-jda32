@@ -1,32 +1,30 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
     <div id="minimal" v-on:click="sample($event)">
         <button>Yeet!</button>
     </div>
     <div id="bracket"></div>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
-    <div class="flex-container">
-        <div>1</div>
-        <div>2</div>
-        <div>3</div>
+    <div class="bracketology">
+        <div class="left second bracket">
+        </div>
+        <div class="left third bracket">
+        </div>
+        <div class="left fourth bracket">
+        </div>
+        <div class="left fifth bracket">
+        </div>
+        <div class="left sixth bracket">
+        </div>
+        <div class="left fifth bracket">
+        </div>
+        <div class ="left fourth bracket">
+        </div>
+        <div class = "left third bracket">
+        </div>
+        <div class="left second bracket">
+        </div>
+        </div>
     </div>
-
-  </div>
 </template>
 
 
@@ -62,7 +60,47 @@ export default {
   },
   methods: {
     sample: function(event){
-        
+        var i
+        for(i = 1; i<=16; i++){
+            if(i % 2 === 0){
+                $(".second").append($('<div class="even">' + i + '</div>'))
+            }
+            else{
+                $(".second").append($('<div class="odd">' + i + '</div>'))
+            }
+        }
+        for(i = 1; i<=8; i++){
+            if(i % 2 === 0){
+                $(".third").append($('<div class="even">' + i + '</div>'))
+            }
+            else{
+                $(".third").append($('<div class="odd">' + i + '</div>'))
+            }
+        }
+        for(i = 1; i<=4; i++){
+            if(i % 2 === 0){
+                $(".fourth").append($('<div class="even">' + i + '</div>'))
+            }
+            else{
+                $(".fourth").append($('<div class="odd">' + i + '</div>'))
+            }
+        }
+        for(i = 1; i<=2; i++){
+            if(i % 2 === 0){
+                $(".fifth").append($('<div class="even">' + i + '</div>'))
+            }
+            else{
+                $(".fifth").append($('<div class="odd">' + i + '</div>'))
+            }
+        }
+        for(i = 1; i<=2; i++){
+            if(i % 2 === 0){
+                $(".sixth").append($('<div class="even">' + i + '</div>'))
+            }
+            else{
+                $(".sixth").append($('<div class="odd">' + i + '</div>'))
+            }
+        }
         d3.select("body").style("background-color", "yellow").transition().delay(1000).styleTween("background-color", function(){return d3.interpolate("yellow", "cyan")}).duration(5000)
         
     }
@@ -97,16 +135,33 @@ li {
 a {
   color: #42b983;
 }
-.flex-container {
+.bracketology{
+    display:flex;
+    align-items: center;
+}
+.bracket {
   display: flex;
   background-color: Purple;
   flex-direction: column;
+  width: 10%;
+}
+.left{
+    float: left;
+}
+.right{
+    float: right;
 }
 
-.flex-container > div {
-  background-color: #f1f1f1;
+
+.bracket > div {
   margin: 10px;
   padding: 20px;
   font-size: 30px;
+}
+.even{
+    background-color: green;
+}
+.odd{
+    background-color: red;
 }
 </style>
