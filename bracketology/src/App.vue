@@ -1,27 +1,37 @@
 <template>
   <div id="app">
+    <div id="view_official">
+        <b-dropdown id="ddown1" text="View Official Brackets" >
+            <b-dropdown-item v-for="official in officials" v-on:click="sample(official.year)">{{official.year}}</b-dropdown-item>
+        </b-dropdown>
+        
+    </div>
     <div id="minimal" v-on:click="sample($event)">
         <button>Yeet!</button>
     </div>
     <div id="bracket"></div>
     <div class="bracketology">
-        <div class="left second bracket">
+        <div class="left 64 bracket west">
         </div>
-        <div class="left third bracket">
+        <div class="left 32 bracket west">
         </div>
-        <div class="left fourth bracket">
+        <div class="left 16 bracket west">
         </div>
-        <div class="left fifth bracket">
+        <div class="left 8 bracket west">
         </div>
-        <div class="left sixth bracket">
+        <div class="left 4 bracket west">
         </div>
-        <div class="left fifth bracket">
+        <div class="left 2 bracket">
         </div>
-        <div class ="left fourth bracket">
+        <div class="left 4 bracket east">
         </div>
-        <div class = "left third bracket">
+        <div class="left 8 bracket east">
         </div>
-        <div class="left second bracket">
+        <div class ="left 16 bracket east">
+        </div>
+        <div class = "left 32 bracket east">
+        </div>
+        <div class="left 64 bracket east">
         </div>
         </div>
     </div>
@@ -40,7 +50,11 @@ var config = {
     storageBucket: "bracketology-dd459.appspot.com",
     messagingSenderId: "48478220972"
   }
+  
+  
 var db = firebase.initializeApp(config).database()
+var officialRef = db.ref('Years')
+
 export default {
   name: 'app',
   data () {
@@ -58,9 +72,84 @@ export default {
         }
     }
   },
+  firebase:{
+    officials: officialRef
+  },
   methods: {
     sample: function(event){
         var i
+        /*db.ref("users/Yeet").child('username').on('value', function(snap){
+            console.log(snap.val())
+        })
+        db.ref("Years/2014").child('year').on('value', function(snap){
+            console.log(snap.val())
+        })*/
+        db.ref("Years/" + event + "/finalfour").on('value', function(snap){
+            snap.forEach(function(childSnapshot){
+                childSnapshot.forEach(function(grandChildSnap){
+                    grandChildSnap.forEach(function(championSnap){
+                    var round = championSnap.child('round_of').val()
+                        if(Number(grandChildSnap.key) === 0){
+                            if(Number(championSnap.child('round_of').val()) === 4){
+                                if(Number(championSnap.key) === 0){
+                        
+                                    $('.' + round + '.west').append($('<div class="even"><p>' + championSnap.child('team').val() + '</p></div>'))
+                                }
+                                else{
+                                    $('.' + round + '.west').append($('<div class="odd"><p>' + championSnap.child('team').val() + '</p></div>'))
+                                }
+                            }
+                            else{
+                                if(Number(championSnap.key) === 0){
+                                    
+                                    $('.' + round).append($('<div class="even"<p>' + championSnap.child('team').val() + '</p></div>'))
+                                }
+                                else{
+                                    $('.' + round).append($('<div class="odd"><p>' + championSnap.child('team').val() + '</p></div>'))
+                                }
+                            }
+                        }
+                        else{
+                            if(Number(championSnap.key) === 0){
+                                    $('.' + round + '.east').append($('<div class="even"><p>' + championSnap.child('team').val() + '</p></div>'))
+                                }
+                                else{
+                                    $('.' + round + '.east').append($('<div class="odd"><p>' + championSnap.child('team').val() + '</p></div>'))
+                                }
+                        }
+                    })
+                    
+                })
+            })
+        })
+        db.ref("Years/" + event + "/regions").on('value', function(snap){
+            snap.forEach(function(childSnapshot){
+                childSnapshot.forEach(function(grandChildSnap){
+                    grandChildSnap.forEach(function(roundSnap){
+                        roundSnap.forEach(function(gameSnap){
+                            var round = gameSnap.child('round_of').val()
+                            if(Number(childSnapshot.key) === 0 || Number(childSnapshot.key) === 1){
+                                if(Number(gameSnap.key) === 0){
+                                    $('.' + round + '.west').append($('<div class="even"><p>' + gameSnap.child('team').val() + '</p></div>'))
+                                }
+                                else{
+                                    $('.' + round + '.west').append($('<div class="odd"><p>' + gameSnap.child('team').val() + '</p></div>'))
+                                }
+                            }
+                            else{
+                                if(Number(gameSnap.key) === 0){
+                                    $('.' + round + '.east').append($('<div class="even"><p>' + gameSnap.child('team').val() + '</p></div>'))
+                                }
+                                else{
+                                    $('.' + round + '.east').append($('<div class="odd"><p>' + gameSnap.child('team').val() + '</p></div>'))
+                                }
+                            }
+                        })
+                    })
+                })
+            })
+        })
+        /*
         for(i = 1; i<=16; i++){
             if(i % 2 === 0){
                 $(".second").append($('<div class="even">' + i + '</div>'))
@@ -85,7 +174,7 @@ export default {
                 $(".fourth").append($('<div class="odd">' + i + '</div>'))
             }
         }
-        for(i = 1; i<=2; i++){
+        /*for(i = 1; i<=2; i++){
             if(i % 2 === 0){
                 $(".fifth").append($('<div class="even">' + i + '</div>'))
             }
@@ -93,14 +182,14 @@ export default {
                 $(".fifth").append($('<div class="odd">' + i + '</div>'))
             }
         }
-        for(i = 1; i<=2; i++){
+        /*for(i = 1; i<=2; i++){
             if(i % 2 === 0){
                 $(".sixth").append($('<div class="even">' + i + '</div>'))
             }
             else{
                 $(".sixth").append($('<div class="odd">' + i + '</div>'))
             }
-        }
+        }*/
         d3.select("body").style("background-color", "yellow").transition().delay(1000).styleTween("background-color", function(){return d3.interpolate("yellow", "cyan")}).duration(5000)
         
     }
@@ -156,7 +245,6 @@ a {
 .bracket > div {
   margin: 10px;
   padding: 20px;
-  font-size: 30px;
 }
 .even{
     background-color: green;

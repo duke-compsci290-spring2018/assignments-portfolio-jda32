@@ -8,7 +8,14 @@ Vue.use(Flexbox)
 
 import 'expose-loader?$!expose-loader?jQuery!jquery'
 
+import BootstrapVue from 'bootstrap-vue'
+
+Vue.use(BootstrapVue)
+
 Vue.use(VueFire)
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 new Vue({
     el: '#app',
