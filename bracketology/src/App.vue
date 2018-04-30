@@ -30,10 +30,10 @@
         <br>
         <div id = "adminControls" v-if="currentUser.admin">
             <b-dropdown id="ddown1" text="Delete a user">
-                <b-dropdown-item v-for="user in users" v-if="user.username != currentUser.name">{{user.username}}</b-dropdown-item>
+                <b-dropdown-item v-for="user in users" v-if="user.username != currentUser.name && user.admin !== true" v-on:click="deleteUser(user.username)">{{user.username}}</b-dropdown-item>
             </b-dropdown>
             <b-dropdown id="ddown1" text="Make a User an Admin">
-                <b-dropdown-item v-for="user in users" v-if="user.username != currentUser.name">{{user.username}}</b-dropdown-item>
+                <b-dropdown-item v-for="user in users" v-if="user.username != currentUser.name" v-on:click="makeAdmin(user.username)">{{user.username}}</b-dropdown-item>
             </b-dropdown>
             <button id="export" type="button" @click="exportData()">Export Data</button>
         </div>
@@ -42,20 +42,26 @@
     </div>
     <div id="view_official">
         <b-dropdown id="ddown1" text="View Official Brackets" >
-            <b-dropdown-item v-for="official in officials" v-on:click="sample(official.year, 1)">{{official.year}}</b-dropdown-item>
+            <b-dropdown-item v-for="official in officials" v-on:click="sample(official.year, 1, 0)">{{official.year}}</b-dropdown-item>
         </b-dropdown> 
         <br>
         <br>
         <p v-if="currentUser.signedIn"> Create a randomized bracket for any given year. Input a bracket name and then click on the year you want. </p>
         <input v-if="currentUser.signedIn" class="create-bracket" placeholder="Custom Bracket Name" v-model="customBracketName">
         <b-dropdown id="ddown1" text="Create A Bracket" v-if="currentUser.signedIn">
-            <b-dropdown-item v-for="official in officials" v-on:click="sample(official.year, 0)">{{official.year}}</b-dropdown-item>
+            <b-dropdown-item v-for="official in officials" v-on:click="sample(official.year, 0, 0)">{{official.year}}</b-dropdown-item>
+        </b-dropdown>
+        <b-dropdown id="ddown1" text="View Your Brackets" v-for="user in users" v-if="currentUser.signedIn && currentUser.name == user.username">
+            <b-dropdown-item v-for="(value, key) in user.brackets" v-on:click="sample(key, 2, value)">{{key}}</b-dropdown-item>
         </b-dropdown>
         <br>
         <br>
         <b-dropdown id="ddown1" text="Make An Official Bracket" v-if="currentUser.admin">
         </b-dropdown>
     </div>
+    <br>
+    <p v-if="bracketCreated==true || customBracketName != ''">Yellow background behind the team signifies that team won.</p>
+    <br>
     <div id="bracket"></div>
     <div class="bracketology">
         <div class="left 64 bracket west">
@@ -82,6 +88,7 @@
         </div>
     </div>
     <div class="createBracket">
+        <br>
         <div class="newleft 64 bracket newwest">
         </div>
         <div class="newleft 32 bracket newwest">
@@ -110,6 +117,7 @@
         <table id="winloss">
         </table>
     </div>
+    <p>NCAA March Madness is a registered trademark under NCAA.</p>
     </div>
 </template>
 
@@ -117,7 +125,7 @@
 <script>
 var firebase = require('firebase')
 // Load expose-loader such that I can use jQuery within vue
-console.log()
+
 var config = {
     apiKey: "AIzaSyCVzFAh--3WNTrUmR21C-TsxdhUdBp6PIk",
     authDomain: "bracketology-dd459.firebaseapp.com",
@@ -169,6 +177,7 @@ export default {
         signinEmail: '',
         oldPassword: '',
         oldPasswordEmail: '',
+        bracketCreated: false,
         
         probArray: '',
         
@@ -256,14 +265,14 @@ export default {
                 for(j = 0; j<17; j++){
                     if(i===0){
                         if(j===0){
-                            cell = $('<td>' + "Seeds" + '</td>')
+                            cell = $('<td>' + "Seed" + '</td>')
                         }
                         else{
-                            cell = $('<td>' + j + " losses" + '</td>')
+                            cell = $('<td>' + j + " Looses" + '</td>')
                         }
                     }
                     else if(j===0){
-                        cell = $('<td>' + i + " wins" + '</td>')
+                        cell = $('<td>' + i + " Wins" + '</td>')
                     }
                     else{
                         cell = $('<td>' + sDataArray[i-1][j-1] + '</td>')
@@ -338,7 +347,7 @@ export default {
             userRef.once('value', function(snap){
                 snap.forEach(function(childSnap){
                     if(oldU === childSnap.key && oldP === childSnap.child('password').val()){
-                        console.log("Found")
+                        
                         found = 1
                         data.currentUser.name = childSnap.key
                         data.currentUser.email = childSnap.child('email').val()
@@ -397,8 +406,12 @@ export default {
             this.oldPasswordEmail = ''
             this.signinUser = ''
             this.siginEmail = ''
-            if($('.newleft').length > 0){
-                $('.newleft').remove()
+            this.bracketCreated = false
+            if($('.winner').length > 0){
+                $('.winner').remove()
+            }
+            if($('.loser').length > 0){
+                $('.loser').remove()
             }
         },
 // --- Function to change Username ---
@@ -414,8 +427,9 @@ export default {
                 myWindow.document.write(JSON.stringify(snap))
             })
         },
-    sample: function(event, crea){
+    sample: function(event, crea, val){
         var access = this
+        var first = []
         var second = []
         var third = []
         var fourth = []
@@ -427,6 +441,9 @@ export default {
         var countFourth = 0
         var countFifth = 0
         var countSixth = 0
+        var countSev = 0
+        var cont = 0
+        var bracketName = access.customBracketName
         if(crea === 0){
             if($('.loser').length>0){
                 $('.loser').remove()
@@ -434,6 +451,16 @@ export default {
             if($('.winner').length>0){
                 $('.winner').remove()
             }
+            db.ref("users/" + access.currentUser.name + "/" + "brackets").once('value', function(snap){
+            snap.forEach(function(childSnap){
+                if(childSnap.key === access.customBracketName){
+                    alert("Bracket already exists, try another name.")
+                    access.customBracketName = ''
+                    cont = 1  
+                }
+            })
+        })
+            this.bracketCreated = true
         db.ref("Years/" + event + "/regions").on('value', function(snap){
             snap.forEach(function(childSnapshot){
                 childSnapshot.forEach(function(grandChildSnap){
@@ -472,12 +499,16 @@ export default {
                             if(Number(round) === 64){
                                 
                                 if(Number(childSnapshot.key) === 0 || Number(childSnapshot.key) === 1){
-                                    second.push([roundSnap.child('0'),0])
+                                    first.push([roundSnap.child('0'),1])
+                                    first.push([roundSnap.child('1'),0])
+                                    second.push([roundSnap.child('0'),0,0])
                                     $('.' + round + '.newwest').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                     $('.' + round + '.newwest').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                }
                                 else{
-                                    second.push([roundSnap.child('0'),2])
+                                    first.push([roundSnap.child('0'),1])
+                                    first.push([roundSnap.child('1'),0])
+                                    second.push([roundSnap.child('0'),2,0])
                                     $('.' + round + '.neweast').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                     $('.' + round + '.neweast').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                 }
@@ -487,14 +518,17 @@ export default {
                         
                         else{
                             if(Number(round) === 64){
-                                
                                 if(Number(childSnapshot.key) === 0 || Number(childSnapshot.key) === 1){
-                                    second.push([roundSnap.child('1'),0])
+                                    first.push([roundSnap.child('0'),0])
+                                    first.push([roundSnap.child('1'),1])
+                                    second.push([roundSnap.child('1'),0,0])
                                     $('.' + round + '.newwest').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                     $('.' + round + '.newwest').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                 }
                             else{
-                                    second.push([roundSnap.child('1'),2])
+                                    first.push([roundSnap.child('0'),0])
+                                    first.push([roundSnap.child('1'),1])
+                                    second.push([roundSnap.child('1'),2, 0])
                                     $('.' + round + '.neweast').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                     $('.' + round + '.neweast').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                 }
@@ -511,7 +545,6 @@ export default {
                                     firstTeam = a.child('team').val()
                                     secondTeam = b.child('team').val()
                                     round = 32
-                                    
                                     firstSeed = a.child('seed').val()
                                     secondSeed = b.child('seed').val()
                                     firstP = access.probArray[firstSeed - 1][secondSeed - 1]
@@ -535,15 +568,18 @@ export default {
                                         fp = 0.5
                                         sp = 0.5
                                     }
+                                    
                                     if(random_num <= fp){
                                         if(Number(round) === 32){
                                             if(region === 0 || region === 1){
-                                                third.push([a,0])
+                                                second[i][2] = 1
+                                                third.push([a,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                third.push([a,2])
+                                                second[i][2] = 1
+                                                third.push([a,2,0])
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -555,12 +591,14 @@ export default {
                                         if(Number(round) === 32){
                                             
                                             if(region === 0 || region === 1){
-                                                third.push([b,0])
+                                                second[i+1][2] = 1
+                                                third.push([b,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                third.push([b,2])
+                                                third.push([b,2,0])
+                                                second[i+1][2] = 1
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -609,12 +647,14 @@ export default {
                                     if(random_num <= fp){
                                         if(Number(round) === 16){
                                             if(region === 0 || region === 1){
-                                                fourth.push([a,0])
+                                                third[i][2] = 1
+                                                fourth.push([a,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                fourth.push([a,2])
+                                                third[i][2] = 1
+                                                fourth.push([a,2,0])
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -626,12 +666,14 @@ export default {
                                         if(Number(round) === 16){
                                             
                                             if(region === 0 || region === 1){
-                                                fourth.push([b,0])
+                                                third[i+1][2] = 1
+                                                fourth.push([b,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                fourth.push([b,2])
+                                                third[i+1][2] = 1
+                                                fourth.push([b,2,0])
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -680,12 +722,14 @@ export default {
                                     if(random_num <= fp){
                                         if(Number(round) === 8){
                                             if(region === 0 || region === 1){
-                                                fifth.push([a,0])
+                                                fourth[i][2] = 1
+                                                fifth.push([a,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                fifth.push([a,2])
+                                                fourth[i][2] = 1
+                                                fifth.push([a,2,0])
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -697,12 +741,14 @@ export default {
                                         if(Number(round) === 8){
                                             
                                             if(region === 0 || region === 1){
-                                                fifth.push([b,0])
+                                                fourth[i+1][2] = 1
+                                                fifth.push([b,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                fifth.push([b,2])
+                                                fourth[i+1][2] = 1
+                                                fifth.push([b,2,0])
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -751,12 +797,14 @@ export default {
                                     if(random_num <= fp){
                                         if(Number(round) === 4){
                                             if(region === 0 || region === 1){
-                                                sixth.push([a,0])
+                                                fifth[i][2] = 1
+                                                sixth.push([a,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                sixth.push([a,2])
+                                                fifth[i][2] = 1
+                                                sixth.push([a,2,0])
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -768,12 +816,14 @@ export default {
                                         if(Number(round) === 4){
                                             
                                             if(region === 0 || region === 1){
-                                                sixth.push([b,0])
+                                                fifth[i+1][2] = 1
+                                                sixth.push([b,0,0])
                                                 $('.' + round + '.newwest').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newwest').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
-                                                sixth.push([b,2])
+                                                fifth[i+1][2] = 1
+                                                sixth.push([b,2,0])
                                                 $('.' + round + '.neweast').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.neweast').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
@@ -822,11 +872,13 @@ export default {
                                     if(random_num <= fp){
                                         if(Number(round) === 2){
                                             if(region === 0 || region === 1){
+                                                fifth[i][2] = 1
                                                 winner.push([a,0])
                                                 $('.' + round + '.newleft').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newleft').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
+                                                fifth[i][2] = 1
                                                 winner.push([a,2])
                                                 $('.' + round + '.newleft').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newleft').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
@@ -839,11 +891,13 @@ export default {
                                         if(Number(round) === 2){
                                             
                                             if(region === 0 || region === 1){
+                                                sixth[i+1][2] = 1
                                                 winner.push([b,0])
                                                 $('.' + round + '.newleft').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newleft').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
                                             }
                                             else{
+                                                sixth[i+1][2] = 1
                                                 winner.push([b,2])
                                                 $('.' + round + '.newleft').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
                                                 $('.' + round + '.newleft').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
@@ -854,39 +908,139 @@ export default {
                                 }
                             }
                         }
-                        
-                        /*
-                        if(Number(round) === 64){
-                            if(Number(childSnapshot.key) === 0 || Number(childSnapshot.key) === 1){
-                        
-                                if(Number(firstScore) > Number(secondScore)){
-                                    $('.' + round + '.newwest').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
-                                    $('.' + round + '.newwest').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
-                                    }
-                                else{
-                                    $('.' + round + '.newwest').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
-                                    $('.' + round + '.newwest').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
-                                }
-                            }
-                            else{
-                                if(Number(firstScore) > Number(secondScore)){
-                                    $('.' + round + '.neweast').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
-                                    $('.' + round + '.neweast').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
-                                }
-                                else{
-                                    $('.' + round + '.neweast').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
-                                    $('.' + round + '.neweast').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
-                                }
-                            }
-                        } */
                     })
                 })
             })
         })
+        
+        if(access.isAlphaNumeric(access.customBracketName) === false){
+            alert("Bracket Name Contains Non-AlphaNumerics")
+            access.customBracketName = ''
+            return 0
+        }
+        if(access.customBracketName === ""){
+            alert("Please enter a bracket name.")
+            return 0
+        }
+        db.ref("users/" + access.currentUser.name + "/" + "brackets").once('value', function(snap){
+            snap.forEach(function(childSnap){
+                if(childSnap.key === access.customBracketName){
+                    alert("Bracket already exists, try another name.")
+                    access.customBracketName = ''
+                    cont = 1  
+                }
+            })
+        }).then(function(){
+        if(winner.length === 1 && countSev === 0 && cont === 0){
+            
+            // BRACKET YEAR
+            db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/year").set(event)
+            
+            // RANDOMLY GENERATED WINNER OF CUSTOM BRACKET
+            db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/winner").set(winner[0][0].child('team').val())
+            
+            var i = 0
+            var j = 0
+            var k = 0
+            var l = 0
+            var m = 0
+            var n = 0
+            var p = 0
+            var q = 0
+            // team
+            // round_of
+            // seed
+            
+            // RANDOMLY GENERATED CUSTOM BRACKET FOR REGIONS
+            
+            for(i = 0; i<4; i++){
+                for(j = 0; j<4; j++){
+                    if(j === 0){
+                        for(k = 0; k < 8; k++){
+                            for(l = 0; l < 2; l++){
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/team").set(first[m][0].child('team').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/seed").set(first[m][0].child('seed').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/round_of").set(first[m][0].child('round_of').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/score").set(first[m][1])
+                                m++
+                            }
+                        }
+                    }
+                    else if(j === 1){
+                        for(k = 0; k < 4; k++){
+                            for(l = 0; l < 2; l++){
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/team").set(second[n][0].child('team').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/seed").set(second[n][0].child('seed').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/round_of").set(32)
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/score").set(second[n][2])
+                                n++
+                            }
+                        }
+                    }
+                    else if(j === 2){
+                        for(k = 0; k < 2; k++){
+                            for(l = 0; l < 2; l++){
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/team").set(third[p][0].child('team').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/seed").set(third[p][0].child('seed').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/round_of").set(16)
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/score").set(third[p][2])
+                                p++
+                            }
+                        }
+                    }
+                    else{
+                        for(k = 0; k < 1; k++){
+                            for(l = 0; l < 2; l++){
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/team").set(fourth[q][0].child('team').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/seed").set(fourth[q][0].child('seed').val())
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/round_of").set(8)
+                                db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/regions/" + i + "/" + j + "/" + k + "/" + l + "/score").set(fourth[q][2])
+                                q++
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        
+        // RANDOMLY GENERATED CUSTOM BRACKET FOR FINAL FOUR
+        m = 0
+        n = 0
+        
+        for(i = 0; i < 2; i++){
+            if(i === 0){
+                for(j = 0; j < 2; j++){
+                    for(k = 0; k < 2; k++){
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/team").set(fifth[m][0].child('team').val())
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/seed").set(fifth[m][0].child('seed').val())
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/round_of").set(4)
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/score").set(fifth[m][2])
+                        m++
+                    }
+                }
+            }
+            else{
+                for(j=0; j<1; j++){
+                    for(k = 0; k < 2; k++){
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/team").set(sixth[n][0].child('team').val())
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/seed").set(sixth[n][0].child('seed').val())
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/round_of").set(2)
+                        db.ref("users/" + access.currentUser.name + "/" + "brackets/" + access.customBracketName + "/" + event + "/finalfour/" + i + "/" + j + "/" + k +"/score").set(sixth[n][2])
+                        n++
+                    }
+                }
+            }
+        }
+        })
+        
             
         }
         if(crea === 1){
         var i
+        this.bracketCreated = true
+        this.customBracketName = ''
         if($('.loser').length>0){
             $('.loser').remove()
         }
@@ -901,34 +1055,36 @@ export default {
                         var round = grandChildSnap.child('0').child('round_of').val()
                         var firstScore = grandChildSnap.child('0').child('score').val()
                         var secondScore = grandChildSnap.child('1').child('score').val()
+                        var firstSeed = grandChildSnap.child('0').child('seed').val()
+                        var secondSeed = grandChildSnap.child('1').child('seed').val()
                         if(Number(childSnapshot.key) === 0){
                         
                             if(Number(firstScore) > Number(secondScore) && Number(grandChildSnap.key) === 0){
-                                $('.' + round + '.west').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.west').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="winner"><p>'  + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                             else if(Number(firstScore) > Number(secondScore) && Number(grandChildSnap.key) === 1){
-                                $('.' + round + '.east').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.east').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                             else if(Number(firstScore) < Number(secondScore) && Number(grandChildSnap.key) === 0){
-                                $('.' + round + '.west').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.west').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                             else if(Number(firstScore) < Number(secondScore) && Number(grandChildSnap.key) === 1){
-                                $('.' + round + '.east').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.east').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             } 
                             
                         }
                         else{
                             if(Number(firstScore) > Number(secondScore)){
-                                $('.' + round + '.left').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.left').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.left').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.left').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                             else{
-                                $('.' + round + '.left').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.left').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.left').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.left').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                         }
                     })
@@ -943,34 +1099,151 @@ export default {
                         var round = roundSnap.child('0').child('round_of').val()
                         var firstScore = roundSnap.child('0').child('score').val()
                         var secondScore = roundSnap.child('1').child('score').val()
-                        console.log(round)
+                        var firstSeed = roundSnap.child('0').child('seed').val()
+                        var secondSeed = roundSnap.child('1').child('seed').val()
+                        
                         if(Number(childSnapshot.key) === 0 || Number(childSnapshot.key) === 1){
                             if(Number(firstScore) > Number(secondScore)){
-                                $('.' + round + '.west').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.west').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                             else{
-                                $('.' + round + '.west').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.west').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                         }
                         else{
                             if(Number(firstScore) > Number(secondScore)){
-                                $('.' + round + '.east').append($('<div class="winner"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.east').append($('<div class="loser"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                             else{
-                                $('.' + round + '.east').append($('<div class="loser"><p>' + firstTeam + '</p></div>'))
-                                $('.' + round + '.east').append($('<div class="winner"><p>' + secondTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
                             }
                         }
                     })
                 })
             })
         })
-        d3.select("body").style("background-color", "yellow").transition().delay(1000).styleTween("background-color", function(){return d3.interpolate("yellow", "cyan")}).duration(5000)
+        d3.select("body").style("background-color", "#FFFACD").transition().delay(1000).styleTween("background-color", function(){return d3.interpolate("#FFFACD", "#E0FFFF")}).duration(5000)
+        }
+        if(crea === 2){
+        var i
+        this.bracketCreated = true
+        if($('.loser').length>0){
+            $('.loser').remove()
+        }
+        if($('.winner').length>0){
+            $('.winner').remove()
+        }
+        var year
+        for(var i in val){
+            year = i
+        }
+        var nam = access.currentUser.name
+        db.ref("users/" + nam + "/brackets/" + event + "/" + year + "/finalfour").on('value', function(snap){
+            snap.forEach(function(childSnapshot){
+                childSnapshot.forEach(function(grandChildSnap){
+                        var firstTeam = grandChildSnap.child('0').child('team').val()
+                        var secondTeam = grandChildSnap.child('1').child('team').val()
+                        var round = grandChildSnap.child('0').child('round_of').val()
+                        var firstScore = grandChildSnap.child('0').child('score').val()
+                        var secondScore = grandChildSnap.child('1').child('score').val()
+                        var firstSeed = grandChildSnap.child('0').child('seed').val()
+                        var secondSeed = grandChildSnap.child('1').child('seed').val()
+                        if(Number(childSnapshot.key) === 0){
+                        
+                            if(Number(firstScore) > Number(secondScore) && Number(grandChildSnap.key) === 0){
+                                $('.' + round + '.west').append($('<div class="winner"><p>'  + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                            else if(Number(firstScore) > Number(secondScore) && Number(grandChildSnap.key) === 1){
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                            else if(Number(firstScore) < Number(secondScore) && Number(grandChildSnap.key) === 0){
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                            else if(Number(firstScore) < Number(secondScore) && Number(grandChildSnap.key) === 1){
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            } 
+                            
+                        }
+                        else{
+                            if(Number(firstScore) > Number(secondScore)){
+                                console.log(firstTeam + "1")
+                                $('.' + round + '.left').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.left').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                            else{
+                                console.log(secondTeam + "2")
+                                $('.' + round + '.left').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.left').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                        }
+                    })
+                })
+            })
+        db.ref("users/" + nam + "/brackets/" + event + "/" + year + "/regions").on('value', function(snap){
+            snap.forEach(function(childSnapshot){
+                childSnapshot.forEach(function(grandChildSnap){
+                    grandChildSnap.forEach(function(roundSnap){
+                        var firstTeam = roundSnap.child('0').child('team').val()
+                        var secondTeam = roundSnap.child('1').child('team').val()
+                        var round = roundSnap.child('0').child('round_of').val()
+                        var firstScore = roundSnap.child('0').child('score').val()
+                        var secondScore = roundSnap.child('1').child('score').val()
+                        var firstSeed = roundSnap.child('0').child('seed').val()
+                        var secondSeed = roundSnap.child('1').child('seed').val()
+                         
+                        if(Number(childSnapshot.key) === 0 || Number(childSnapshot.key) === 1){
+                            if(Number(firstScore) > Number(secondScore)){
+                                $('.' + round + '.west').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                            else{
+                                $('.' + round + '.west').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.west').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                        }
+                        else{
+                            if(Number(firstScore) > Number(secondScore)){
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                            else{
+                                $('.' + round + '.east').append($('<div class="loser"><p>' + firstSeed + " " + firstTeam + '</p></div>'))
+                                $('.' + round + '.east').append($('<div class="winner"><p>' + secondSeed + " " + secondTeam + '</p></div>'))
+                            }
+                        }
+                    })
+                })
+            })
+        })
+        d3.select("body").style("background-color", "#FFFACD").transition().delay(1000).styleTween("background-color", function(){return d3.interpolate("#FFFACD", "#E0FFFF")}).duration(5000)
         }
         
+    },
+    
+    
+    makeAdmin(us){
+        if(confirm('Do you want to make ' + us + ' an admin.')){
+            db.ref("users/" + us + "/admin").set(true)
+        }
+        else{
+            
+        }
+    },
+    deleteUser(us){
+        if(confirm('Do you want to delete user' + us + '?')){
+            db.ref("users/" + us).remove()
+        }
+        else{
+            
+        }
     },
     
     //AlphaNumeric Code: https://stackoverflow.com/questions/4434076/best-way-to-alphanumeric-check-in-javascript USER: Michael Martin-Smucker
@@ -1036,9 +1309,13 @@ a {
     display:flex;
     align-items: center;
 }
+.createBracket{
+    display:flex;
+    align-items: center;
+}
 .bracket {
   display: flex;
-  background-color: Purple;
+  background-color: gray;
   flex-direction: column;
   width: 10%;
 }
@@ -1058,21 +1335,32 @@ a {
 }
 .even{
     background-color: green;
+    border: 1px single;
 }
 .odd{
     background-color: red;
 }
 .winner{
     background-color: #eed653;
+    border: 3px double;
 }
 .loser{
     background-color: #D3D3D3;
 }
 table, th, td {
     border: 1px solid black;
+    background-color: #DCDCDC;
 }
 .statistics{
     display: inline-block;
+}
+header{
+    text-align: center;
+    border-bottom: 5px double;
+    
+}
+header h1{
+    font-family:"Comic Sans MS";
 }
 table{
     margin: 10px;
